@@ -1,0 +1,12 @@
+{
+  "githubOwner": "YOUR_GITHUB_ID",
+  "includeTopics": ["portfolio", "showcase"],
+  "allowlist": ["your-repo-name"],
+  "manualOverrides": {
+    "your-repo-name": {
+      "featured": true,
+      "highlights": ["課題解決", "継続開発"],
+      "screenshot": "/images/apps/your-repo-name.png"
+    }
+  }
+}

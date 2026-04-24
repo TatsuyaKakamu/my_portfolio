@@ -1,0 +1,89 @@
+:root {
+  --bg: #f8f9fb;
+  --surface: #ffffff;
+  --text: #171a1f;
+  --muted: #596273;
+  --accent: #3667f5;
+  --line: #e5e9f0;
+  --max: 1080px;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { width: min(100% - 2rem, var(--max)); margin: 0 auto; }
+header {
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,.95);
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(6px);
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+.nav ul {
+  display: flex;
+  gap: .9rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+.hero { padding: 4rem 0 2.5rem; }
+.hero h1 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0; }
+.hero p { color: var(--muted); max-width: 65ch; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+}
+.card h3 { margin-top: 0; }
+section { padding: 1.5rem 0; }
+section h2 { margin-bottom: .75rem; }
+.meta { color: var(--muted); font-size: .9rem; }
+.badges { display: flex; gap: .4rem; flex-wrap: wrap; }
+.badge {
+  background: #eef3ff;
+  color: #3048a7;
+  border-radius: 999px;
+  padding: .2rem .55rem;
+  font-size: .78rem;
+}
+footer {
+  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+  padding: 1rem 0 2rem;
+  color: var(--muted);
+}
+.list-reset { list-style: none; margin: 0; padding: 0; }
+.stack { display: grid; gap: .75rem; }
+.profile {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(130deg, #e2e8fb, #c9d6f8);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #2d4275;
+}
+@media (max-width: 640px) {
+  .nav { flex-direction: column; align-items: flex-start; gap: .7rem; }
+}

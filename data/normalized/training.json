@@ -1,0 +1,19 @@
+{
+  "training": {
+    "stravaUrl": "https://www.strava.com/athletes/",
+    "summary": {
+      "period": "2026-04",
+      "activities": 0,
+      "distanceKm": 0,
+      "movingTimeHours": 0,
+      "elevationGainM": 0,
+      "note": "継続的なトレーニング習慣を記録しています。"
+    },
+    "privacy": {
+      "includeRoutes": false,
+      "includeHeartRate": false,
+      "includeStartEndLocation": false
+    },
+    "lastSyncedAt": "2026-04-24T00:00:00Z"
+  }
+}

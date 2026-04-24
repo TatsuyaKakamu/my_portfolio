@@ -1,0 +1,15 @@
+{
+  "certifications": [
+    {
+      "name": "Certified Persons Industrial Cybersecurity Foundation (Level 1)",
+      "issuer": "TÜV SÜD",
+      "standard": "IEC 62443",
+      "holderName": "Tatsuya Kakamu",
+      "issueDate": "2025-06-05",
+      "certificationId": "M10522-25M126062",
+      "verificationUrl": "https://www.tuvsud.com/ja-jp/services/training/ac/psms/com-iec62443-foundation/certified-persons",
+      "verificationStatus": "listed",
+      "lastCheckedAt": "2026-04-24T00:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "projects": [
+    {
+      "name": "Sample Portfolio App",
+      "description": "個人ポートフォリオMVPの初版。",
+      "repositoryUrl": "https://github.com/example/sample-portfolio-app",
+      "demoUrl": "",
+      "screenshot": "/images/apps/sample-portfolio-app.png",
+      "techStack": ["HTML", "CSS", "JavaScript"],
+      "highlights": ["静的構成で高速表示", "データ駆動型コンテンツ"],
+      "featured": true,
+      "source": "manual",
+      "github": {
+        "owner": "example",
+        "repo": "sample-portfolio-app",
+        "stars": 0,
+        "topics": ["portfolio"],
+        "primaryLanguage": "JavaScript",
+        "updatedAt": "2026-04-24T00:00:00Z"
+      }
+    }
+  ]
+}

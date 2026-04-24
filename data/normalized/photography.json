@@ -1,0 +1,22 @@
+{
+  "photography": {
+    "instagramUrl": "https://www.instagram.com/",
+    "description": "写真投稿を通じて、日々の視点や関心を記録しています。",
+    "featuredImages": [
+      {
+        "image": "/images/photos/photo-1.jpg",
+        "caption": "",
+        "postUrl": "",
+        "source": "manual",
+        "postedAt": ""
+      },
+      {
+        "image": "/images/photos/photo-2.jpg",
+        "caption": "",
+        "postUrl": "",
+        "source": "manual",
+        "postedAt": ""
+      }
+    ]
+  }
+}
