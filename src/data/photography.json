@@ -1,0 +1,28 @@
+{
+  "instagramUrl": "https://www.instagram.com/",
+  "description": "日々の光や風景、ふとした視点を記録するために写真を撮っています。",
+  "policy": "写真は本人が撮影し、公開を許容したもののみを掲載しています。Instagram 画像は原則として投稿 URL 経由で参照します。",
+  "featuredImages": [
+    {
+      "image": "/images/photos/placeholder-1.svg",
+      "caption": "Placeholder 1",
+      "postUrl": "",
+      "source": "manual",
+      "postedAt": null
+    },
+    {
+      "image": "/images/photos/placeholder-2.svg",
+      "caption": "Placeholder 2",
+      "postUrl": "",
+      "source": "manual",
+      "postedAt": null
+    },
+    {
+      "image": "/images/photos/placeholder-3.svg",
+      "caption": "Placeholder 3",
+      "postUrl": "",
+      "source": "manual",
+      "postedAt": null
+    }
+  ]
+}

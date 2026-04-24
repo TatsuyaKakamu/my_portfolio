@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import certificationsData from "../data/certifications.json";
+
+const { certifications } = certificationsData;
+
+function formatDate(value: string | null | undefined): string {
+  if (!value) return "—";
+  return value.slice(0, 10);
+}
+---
+
+<BaseLayout
+  title="Security"
+  description="IEC 62443 ファウンデーション資格など、産業用サイバーセキュリティに関する学習の記録。"
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Industrial Cybersecurity</p>
+        <h1>Security / Certification</h1>
+        <p class="lead">
+          産業用サイバーセキュリティの国際規格 IEC 62443 を中心に、基礎領域を体系的に学習しています。
+          資格は「専門家」「コンサルタント」としての肩書ではなく、学習の裏付けとして掲載します。
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+        {
+          certifications.map((cert) => (
+            <article class="card cert">
+              <p class="eyebrow">{cert.standard}</p>
+              <h2>{cert.name}</h2>
+              <dl class="meta">
+                <div>
+                  <dt>発行元</dt>
+                  <dd>{cert.issuer}</dd>
+                </div>
+                <div>
+                  <dt>発行日</dt>
+                  <dd>{formatDate(cert.issueDate)}</dd>
+                </div>
+                <div>
+                  <dt>Certification ID</dt>
+                  <dd><code>{cert.certificationId}</code></dd>
+                </div>
+                <div>
+                  <dt>Holder</dt>
+                  <dd>{cert.holderName}</dd>
+                </div>
+              </dl>
+
+              {cert.summary && <p class="muted">{cert.summary}</p>}
+
+              {cert.scope?.length ? (
+                <>
+                  <p class="eyebrow">学習領域</p>
+                  <ul class="list">
+                    {cert.scope.map((s) => (
+                      <li>{s}</li>
+                    ))}
+                  </ul>
+                </>
+              ) : null}
+
+              <div class="verify">
+                <a
+                  href={cert.verificationUrl}
+                  rel="noopener"
+                  target="_blank"
+                  class="button secondary external"
+                >
+                  資格取得者ページで確認
+                </a>
+                <span class="soft status">
+                  掲載状態: {cert.verificationStatus === "listed" ? "確認済み" : "要確認"}
+                </span>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="soft note">
+        注: 本セクションは、IEC 62443 ファウンデーション資格の取得を、産業用サイバーセキュリティの
+        基礎知識を体系的に学習した証明として扱うものです。実業務における責任範囲や専門性を示すものではありません。
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cert {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .meta {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem 1rem;
+  }
+
+  .meta dt {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-soft);
+    margin-bottom: 0.15rem;
+  }
+
+  .meta dd {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 0.95rem;
+  }
+
+  .meta code {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    background: var(--color-bg-muted);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  .verify {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  .status {
+    font-size: 0.8rem;
+  }
+
+  .note {
+    margin-top: var(--space-4);
+    font-size: 0.85rem;
+    max-width: 680px;
+  }
+</style>

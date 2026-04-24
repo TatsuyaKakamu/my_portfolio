@@ -1,0 +1,26 @@
+{
+  "stravaUrl": "https://www.strava.com/",
+  "description": "トレーニングを通じて、継続性と自己管理の習慣を保つことを目的としています。",
+  "summary": {
+    "period": "2026-04",
+    "activities": 0,
+    "distanceKm": 0,
+    "movingTimeHours": 0,
+    "elevationGainM": 0,
+    "note": "初期データ。Strava API 連携後に自動更新されます。"
+  },
+  "yearToDate": {
+    "period": "2026",
+    "activities": 0,
+    "distanceKm": 0,
+    "movingTimeHours": 0,
+    "elevationGainM": 0
+  },
+  "privacy": {
+    "includeRoutes": false,
+    "includeHeartRate": false,
+    "includeStartEndLocation": false,
+    "notes": "位置情報・詳細な心拍・開始/終了地点は、公開用 JSON から除外します。"
+  },
+  "lastSyncedAt": null
+}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <rect width="800" height="450" fill="#f7f7f8"/>
+  <rect x="32" y="32" width="736" height="386" rx="12" fill="#ffffff" stroke="#e5e5e7"/>
+  <rect x="60" y="62" width="150" height="18" rx="4" fill="#e5e5e7"/>
+  <rect x="60" y="92" width="420" height="14" rx="4" fill="#ededef"/>
+  <rect x="60" y="116" width="360" height="14" rx="4" fill="#ededef"/>
+  <rect x="60" y="160" width="680" height="220" rx="8" fill="#f1f1f3"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif"
+        font-size="16" fill="#8a8a90">App screenshot placeholder</text>
+</svg>

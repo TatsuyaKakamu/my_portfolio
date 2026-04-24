@@ -1,0 +1,54 @@
+{
+  "siteName": "Portfolio",
+  "holderName": "Tatsuya Kakamu",
+  "tagline": {
+    "ja": "アプリを作り、産業用サイバーセキュリティを学び、写真を撮り、日々トレーニングを続けています。",
+    "en": "Building apps, learning industrial cybersecurity, capturing moments, and training consistently."
+  },
+  "activities": [
+    {
+      "id": "apps",
+      "label": "App Development",
+      "href": "/apps",
+      "summary": "継続的にアプリを開発し、公開リポジトリとしてアウトプットしています。"
+    },
+    {
+      "id": "security",
+      "label": "Industrial Cybersecurity",
+      "href": "/security",
+      "summary": "IEC 62443 ファウンデーション資格を通じて、産業用サイバーセキュリティの基礎を体系的に学習しました。"
+    },
+    {
+      "id": "photography",
+      "label": "Photography",
+      "href": "/photography",
+      "summary": "写真投稿を通じて、日々の視点や関心を記録しています。"
+    },
+    {
+      "id": "training",
+      "label": "Training",
+      "href": "/training",
+      "summary": "Strava に記録される日々のトレーニングで、継続性と自己管理の習慣を保っています。"
+    }
+  ],
+  "externalLinks": {
+    "github": "https://github.com/",
+    "tuvsud": "https://www.tuvsud.com/ja-jp/services/training/ac/psms/com-iec62443-foundation/certified-persons",
+    "instagram": "https://www.instagram.com/",
+    "strava": "https://www.strava.com/"
+  },
+  "about": {
+    "profileImage": "/images/profile/placeholder.svg",
+    "intro": "アプリ開発、産業用サイバーセキュリティ、写真、トレーニング。それぞれを独立したテーマとして、日々継続することを大切にしています。",
+    "areas": [
+      "Application Development",
+      "Industrial Cybersecurity (IEC 62443)",
+      "Photography",
+      "Training / Endurance"
+    ],
+    "notes": [
+      "本サイトには、会社名や勤務地、連絡先などの情報は含みません。",
+      "掲載している情報は、公開されている情報、または本人が公開を許容した情報に限定しています。"
+    ]
+  }
+}

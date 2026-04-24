@@ -1,0 +1,145 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../data/site.json";
+import projectsData from "../data/projects.json";
+import certificationsData from "../data/certifications.json";
+import trainingData from "../data/training.json";
+
+const featuredProjects = projectsData.projects
+  .filter((p) => p.featured)
+  .slice(0, 3);
+const primaryCert = certificationsData.certifications[0];
+---
+
+<BaseLayout description={site.tagline.ja}>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Portfolio</p>
+      <h1>{site.holderName}</h1>
+      <p class="tagline">{site.tagline.ja}</p>
+      <p class="tagline-en soft">{site.tagline.en}</p>
+
+      <div class="cta">
+        <a class="button" href="/apps">Explore work</a>
+        <a class="button secondary" href="/about">About me</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Activities</p>
+        <h2>4 つの継続</h2>
+        <p class="lead">
+          技術力だけを前面に出すのではなく、信頼性のある技術者と、継続的にアウトプットする個人、その両方を
+          バランス良く伝えることを目的としたサイトです。
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+        {
+          site.activities.map((activity) => (
+            <a href={activity.href} class="card activity-card">
+              <p class="eyebrow">{activity.label}</p>
+              <p class="activity-summary">{activity.summary}</p>
+              <span class="more">詳しく見る →</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Highlights</p>
+        <h2>最新のアウトプット</h2>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <p class="eyebrow">App Development</p>
+          <h3>{featuredProjects[0]?.name ?? "Coming soon"}</h3>
+          <p class="muted">
+            {featuredProjects[0]?.description ?? "GitHub 連携後、公開リポジトリ情報を自動で掲載します。"}
+          </p>
+          <a href="/apps" class="more-link">Apps を見る →</a>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Security</p>
+          <h3>{primaryCert.name}</h3>
+          <p class="muted">発行: {primaryCert.issuer} / {primaryCert.standard}</p>
+          <a href="/security" class="more-link">Security を見る →</a>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Training</p>
+          <h3>継続的なトレーニング</h3>
+          <p class="muted">
+            {trainingData.summary.period} の集計値は自動同期後に反映されます。
+          </p>
+          <a href="/training" class="more-link">Training を見る →</a>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Photography</p>
+          <h3>日々の視点</h3>
+          <p class="muted">Instagram の公開投稿から、代表作を控えめに紹介します。</p>
+          <a href="/photography" class="more-link">Photography を見る →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: var(--space-6) 0 var(--space-5);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tagline {
+    font-size: 1.15rem;
+    max-width: 640px;
+  }
+
+  .tagline-en {
+    font-size: 0.95rem;
+    max-width: 640px;
+    font-style: italic;
+  }
+
+  .cta {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .activity-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--color-text);
+  }
+
+  .activity-card:hover {
+    text-decoration: none;
+    border-color: var(--color-accent);
+  }
+
+  .activity-summary {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .more,
+  .more-link {
+    margin-top: auto;
+    color: var(--color-accent);
+    font-size: 0.85rem;
+  }
+</style>

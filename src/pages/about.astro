@@ -1,0 +1,77 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import site from "../data/site.json";
+---
+
+<BaseLayout title="About" description={site.about.intro}>
+  <section class="section">
+    <div class="container about-grid">
+      <div class="profile">
+        <img
+          src={site.about.profileImage}
+          alt={`${site.holderName} のプロフィール写真`}
+          class="avatar"
+        />
+      </div>
+
+      <div class="profile-body">
+        <p class="eyebrow">About</p>
+        <h1>{site.holderName}</h1>
+        <p class="lead">{site.about.intro}</p>
+
+        <p class="eyebrow">活動領域</p>
+        <ul class="list">
+          {site.about.areas.map((area) => <li>{area}</li>)}
+        </ul>
+
+        <p class="eyebrow">公開方針</p>
+        <ul class="list">
+          {site.about.notes.map((note) => <li>{note}</li>)}
+        </ul>
+
+        <p class="eyebrow">外部サービス</p>
+        <div class="links">
+          <a href={site.externalLinks.github} rel="noopener" target="_blank" class="external">GitHub</a>
+          <a href={site.externalLinks.tuvsud} rel="noopener" target="_blank" class="external">TÜV SÜD</a>
+          <a href={site.externalLinks.instagram} rel="noopener" target="_blank" class="external">Instagram</a>
+          <a href={site.externalLinks.strava} rel="noopener" target="_blank" class="external">Strava</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(160px, 220px) 1fr;
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  .avatar {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-bg-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  .links {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 640px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .profile {
+      max-width: 180px;
+    }
+  }
+</style>

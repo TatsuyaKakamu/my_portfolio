@@ -1,0 +1,128 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import training from "../data/training.json";
+
+function formatNumber(value: number): string {
+  return value.toLocaleString("en-US", { maximumFractionDigits: 1 });
+}
+
+function formatDate(value: string | null | undefined): string {
+  if (!value) return "—";
+  return value.slice(0, 10);
+}
+---
+
+<BaseLayout
+  title="Training"
+  description="Strava に記録される、継続性と自己管理のためのトレーニング概要。"
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Discipline</p>
+        <h1>Training</h1>
+        <p class="lead">{training.description}</p>
+      </div>
+
+      <div class="dashboard">
+        <div class="period">
+          <p class="eyebrow">Monthly — {training.summary.period}</p>
+          <div class="grid grid-3 stats">
+            <div class="stat">
+              <span class="stat-label">Activities</span>
+              <span class="stat-value">{formatNumber(training.summary.activities)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Distance (km)</span>
+              <span class="stat-value">{formatNumber(training.summary.distanceKm)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Moving time (h)</span>
+              <span class="stat-value">{formatNumber(training.summary.movingTimeHours)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Elevation (m)</span>
+              <span class="stat-value">{formatNumber(training.summary.elevationGainM)}</span>
+            </div>
+          </div>
+          {training.summary.note && <p class="muted note">{training.summary.note}</p>}
+        </div>
+
+        <div class="period">
+          <p class="eyebrow">Year to date — {training.yearToDate.period}</p>
+          <div class="grid grid-3 stats">
+            <div class="stat">
+              <span class="stat-label">Activities</span>
+              <span class="stat-value">{formatNumber(training.yearToDate.activities)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Distance (km)</span>
+              <span class="stat-value">{formatNumber(training.yearToDate.distanceKm)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Moving time (h)</span>
+              <span class="stat-value">{formatNumber(training.yearToDate.movingTimeHours)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Elevation (m)</span>
+              <span class="stat-value">{formatNumber(training.yearToDate.elevationGainM)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy card">
+        <p class="eyebrow">プライバシー方針</p>
+        <ul class="list">
+          <li>位置情報・ルートは公開しません ({String(training.privacy.includeRoutes)})</li>
+          <li>心拍などの健康情報は公開しません ({String(training.privacy.includeHeartRate)})</li>
+          <li>開始・終了地点は公開しません ({String(training.privacy.includeStartEndLocation)})</li>
+        </ul>
+        <p class="soft">{training.privacy.notes}</p>
+      </div>
+
+      <div class="meta">
+        <a href={training.stravaUrl} rel="noopener" target="_blank" class="button secondary external">
+          Strava を開く
+        </a>
+        <span class="soft">最終同期: {formatDate(training.lastSyncedAt)}</span>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .period .eyebrow {
+    margin-bottom: var(--space-2);
+  }
+
+  .stats {
+    margin-bottom: var(--space-2);
+  }
+
+  .note {
+    font-size: 0.9rem;
+  }
+
+  .privacy {
+    margin-top: var(--space-4);
+  }
+
+  .privacy .list li {
+    color: var(--color-text);
+  }
+
+  .meta {
+    margin-top: var(--space-4);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+</style>

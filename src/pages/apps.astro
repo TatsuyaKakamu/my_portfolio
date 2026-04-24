@@ -1,0 +1,163 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import projectsData from "../data/projects.json";
+import site from "../data/site.json";
+
+const { projects, lastSyncedAt } = projectsData;
+
+function formatDate(value: string | null | undefined): string {
+  if (!value) return "—";
+  try {
+    return new Date(value).toISOString().slice(0, 10);
+  } catch {
+    return "—";
+  }
+}
+---
+
+<BaseLayout
+  title="Apps"
+  description="公開アプリ・リポジトリを通じた、継続的な開発アウトプット。"
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">App Development</p>
+        <h1>Apps</h1>
+        <p class="lead">
+          公開アプリ・公開リポジトリを通じて、継続的な開発活動と技術的アウトプットを示します。
+          掲載対象は GitHub Topics または allowlist で制御し、description / language / updated_at
+          などを GitHub REST API から取得します。
+        </p>
+        <p class="soft sync-meta">
+          最終同期: {formatDate(lastSyncedAt)} ・ 全体一覧:{" "}
+          <a href={site.externalLinks.github} rel="noopener" target="_blank" class="external">
+            GitHub
+          </a>
+        </p>
+      </div>
+
+      <div class="grid grid-2 projects">
+        {
+          projects.map((project) => (
+            <article class="card project">
+              <div class="screenshot">
+                <img
+                  src={project.screenshot}
+                  alt={`${project.name} のスクリーンショット`}
+                  loading="lazy"
+                />
+              </div>
+              <div class="project-body">
+                <h2>{project.name}</h2>
+                <p class="muted">{project.description}</p>
+
+                {project.techStack?.length ? (
+                  <div class="tags">
+                    {project.techStack.map((t) => (
+                      <span class="tag">{t}</span>
+                    ))}
+                  </div>
+                ) : null}
+
+                {project.highlights?.length ? (
+                  <>
+                    <p class="eyebrow">Highlights</p>
+                    <ul class="list">
+                      {project.highlights.map((h) => (
+                        <li>{h}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
+
+                <div class="project-meta">
+                  <span class="soft">
+                    更新: {formatDate(project.github?.updatedAt)}
+                  </span>
+                  <div class="project-links">
+                    {project.repositoryUrl && (
+                      <a
+                        href={project.repositoryUrl}
+                        rel="noopener"
+                        target="_blank"
+                        class="external"
+                      >
+                        GitHub
+                      </a>
+                    )}
+                    {project.demoUrl && (
+                      <a
+                        href={project.demoUrl}
+                        rel="noopener"
+                        target="_blank"
+                        class="external"
+                      >
+                        Demo
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sync-meta {
+    font-size: 0.85rem;
+  }
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .screenshot {
+    aspect-ratio: 16 / 9;
+    background: var(--color-bg-muted);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .screenshot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-body {
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+  }
+
+  .project-meta {
+    margin-top: auto;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+
+  .project-links {
+    display: flex;
+    gap: var(--space-2);
+  }
+</style>

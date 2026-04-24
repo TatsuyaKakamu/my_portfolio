@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import photography from "../data/photography.json";
+---
+
+<BaseLayout
+  title="Photography"
+  description="日々の視点や関心を記録した、控えめな写真の紹介。"
+>
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="eyebrow">Creative</p>
+        <h1>Photography</h1>
+        <p class="lead">{photography.description}</p>
+      </div>
+
+      <div class="photo-grid">
+        {
+          photography.featuredImages.map((photo) => {
+            const figure = (
+              <figure>
+                <img src={photo.image} alt={photo.caption ?? "Featured photo"} loading="lazy" />
+                {photo.caption && <figcaption>{photo.caption}</figcaption>}
+              </figure>
+            );
+            return photo.postUrl ? (
+              <a href={photo.postUrl} rel="noopener" target="_blank">
+                {figure}
+              </a>
+            ) : (
+              figure
+            );
+          })
+        }
+      </div>
+
+      <div class="meta">
+        <a
+          href={photography.instagramUrl}
+          rel="noopener"
+          target="_blank"
+          class="button secondary external"
+        >
+          Instagram を開く
+        </a>
+        <p class="soft policy">{photography.policy}</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .meta {
+    margin-top: var(--space-4);
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .policy {
+    font-size: 0.85rem;
+    max-width: 520px;
+    margin: 0;
+  }
+</style>

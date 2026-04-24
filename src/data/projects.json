@@ -1,0 +1,28 @@
+{
+  "lastSyncedAt": null,
+  "source": "manual",
+  "projects": [
+    {
+      "name": "Sample App",
+      "description": "自動同期前のプレースホルダ。GitHub Topics または allowlist で掲載対象を制御します。",
+      "repositoryUrl": "https://github.com/",
+      "demoUrl": "",
+      "screenshot": "/images/apps/placeholder.svg",
+      "techStack": ["TypeScript", "Node.js"],
+      "highlights": [
+        "公開リポジトリを allowlist / topics で制御する設計",
+        "GitHub API から description / language / updatedAt を取得"
+      ],
+      "featured": true,
+      "source": "manual",
+      "github": {
+        "owner": "",
+        "repo": "",
+        "stars": 0,
+        "topics": [],
+        "primaryLanguage": "",
+        "updatedAt": null
+      }
+    }
+  ]
+}

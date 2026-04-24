@@ -1,0 +1,44 @@
+---
+import site from "../data/site.json";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container inner">
+    <div class="links">
+      <a href={site.externalLinks.github} rel="noopener" target="_blank" class="external">GitHub</a>
+      <a href={site.externalLinks.tuvsud} rel="noopener" target="_blank" class="external">TÜV SÜD</a>
+      <a href={site.externalLinks.instagram} rel="noopener" target="_blank" class="external">Instagram</a>
+      <a href={site.externalLinks.strava} rel="noopener" target="_blank" class="external">Strava</a>
+    </div>
+    <p class="meta soft">© {year} {site.holderName}. 公開情報のみ掲載しています。</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: var(--space-4) 0;
+    margin-top: var(--space-5);
+    background: var(--color-bg-muted);
+  }
+
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .links {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .meta {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,27 @@
+{
+  "name": "my-portfolio-website",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sync:github": "node scripts/sync-github.mjs",
+    "sync:strava": "node scripts/sync-strava.mjs",
+    "sync:certifications": "node scripts/sync-certifications.mjs",
+    "sync:all": "node scripts/sync-github.mjs && node scripts/sync-strava.mjs && node scripts/sync-certifications.mjs"
+  },
+  "dependencies": {
+    "astro": "^4.16.18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
