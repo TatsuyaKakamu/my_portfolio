@@ -120,13 +120,18 @@ npm run preview
 
 ## 公開時の注意
 
-`astro.config.mjs` の `site` は現在 `https://example.com` です。本番公開時は実際のドメインに差し替えてください。
+このサイトは GitHub Pages の `https://tatsuyakakamu.github.io/my_portfolio_website/` に公開されます。
+
+`astro.config.mjs` は GitHub Pages のプロジェクトページ向けに `site` と `base` を設定しています。
 
 ```js
 export default defineConfig({
-  site: "https://your-domain.example"
+  site: "https://tatsuyakakamu.github.io",
+  base: "/my_portfolio_website"
 });
 ```
+
+別ドメインに移行する場合は `site` をその URL に変更し、サブパス公開でなくなる場合は `base` を削除してください。デプロイは `.github/workflows/deploy.yml` により `main` ブランチへの push 時に自動実行されます。
 
 ## 要件定義
 

@@ -31,11 +31,12 @@
 - [x] TÜV SÜD の資格検証ページはリンク済み
 - [x] `npm run build` は成功する
 - [x] `dist/` は生成済み
-- [ ] `astro.config.mjs` の `site` は `https://example.com` のまま
-- [ ] GitHub Pages の公開URLが未確定
-- [ ] プロジェクトPages用の `base` 設定が未対応
-- [ ] GitHub Actions のPagesデプロイワークフローは未実装
-- [ ] `.astro/` が `.gitignore` に未追加
+- [x] `astro.config.mjs` の `site` を GitHub Pages 用に更新済み (`https://tatsuyakakamu.github.io`)
+- [x] GitHub Pages の公開URLを確定 (`https://tatsuyakakamu.github.io/my_portfolio_website/`)
+- [x] プロジェクトPages用の `base` 設定 (`/my_portfolio_website`) を反映
+- [x] GitHub Actions のPagesデプロイワークフロー (`.github/workflows/deploy.yml`) を実装
+- [x] `.astro/` を `.gitignore` に追加済み
+- [x] `dist/` を `.gitignore` に追加し、Git 管理から除外
 - [ ] プロフィール画像、アプリ画像、写真はダミーまたは生成画像
 - [ ] Apps のプロジェクト名、説明、スター数、フォーク数、更新日は仮データ
 - [ ] GitHub / Instagram / Strava の外部リンクは未設定
@@ -50,18 +51,17 @@
 - [ ] ユーザー/Organization Pagesとして公開するか決める
   - 例: `https://<username>.github.io/`
   - リポジトリ名は通常 `<username>.github.io`
-- [ ] プロジェクトPagesとして公開するか決める
-  - 例: `https://<username>.github.io/my_portfolio_website/`
-  - 現在のリポジトリ名を使うなら、この方式になる可能性が高い
-- [ ] 独自ドメインを使うか決める
-  - 最初の公開では後回しでもよい
+- [x] プロジェクトPagesとして公開するか決める
+  - 採用: `https://tatsuyakakamu.github.io/my_portfolio_website/`
+- [x] 独自ドメインを使うか決める
+  - 採用しない (github.io ドメインのまま公開)
 
 ### 0-2. AstroをGitHub Pages向けに設定する
 
-- [ ] `astro.config.mjs` の `site` を実際の公開URLに変更する
-- [ ] プロジェクトPagesの場合は `base` をリポジトリ名に合わせる
-- [ ] `npm run build` 後の `dist/index.html` に `https://example.com` が残っていないことを確認する
-- [ ] CSSと画像のパスが公開方式に合っていることを確認する
+- [x] `astro.config.mjs` の `site` を実際の公開URLに変更する
+- [x] プロジェクトPagesの場合は `base` をリポジトリ名に合わせる
+- [x] `npm run build` 後の `dist/index.html` に `https://example.com` が残っていないことを確認する
+- [x] CSSと画像のパスが公開方式に合っていることを確認する (`src/lib/asset.ts` ヘルパーで `BASE_URL` を前置)
 
 ユーザー/Organization Pages または独自ドメイン直下の場合:
 
@@ -82,12 +82,12 @@ export default defineConfig({
 
 ### 0-3. GitHub ActionsでPagesへデプロイする
 
-- [ ] `.github/workflows/deploy.yml` を追加する
-- [ ] push時に `npm ci` を実行する
-- [ ] `npm run build` を実行する
-- [ ] `dist/` をPages artifactとしてアップロードする
-- [ ] GitHub Pagesへデプロイする
-- [ ] GitHub repository settings で Pages の Source を `GitHub Actions` にする
+- [x] `.github/workflows/deploy.yml` を追加する
+- [x] push時に `npm ci` を実行する
+- [x] `npm run build` を実行する
+- [x] `dist/` をPages artifactとしてアップロードする
+- [x] GitHub Pagesへデプロイする
+- [ ] GitHub repository settings で Pages の Source を `GitHub Actions` にする (※ ユーザー側でGitHub UIから操作)
 
 想定ワークフロー:
 
@@ -136,23 +136,22 @@ jobs:
 
 ### 0-4. Git管理対象を公開向けに整理する
 
-- [ ] `.gitignore` に `.astro/` を追加する
-- [ ] GitHub Actionsでデプロイするため、`dist/` をGit管理から外すか決める
-  - 推奨: `dist/` はコミットせず、Actionsで毎回ビルドする
-- [ ] `dist/` をコミットしない方針なら `.gitignore` に `dist/` を追加する
-- [ ] すでにGit管理されている `dist/` を外すか決める
-  - 外す場合は `git rm -r --cached dist`
-- [ ] `package-lock.json` は `npm ci` のためGit管理に残す
+- [x] `.gitignore` に `.astro/` を追加する
+- [x] GitHub Actionsでデプロイするため、`dist/` をGit管理から外すか決める
+  - 採用: `dist/` はコミットせず、Actionsで毎回ビルドする
+- [x] `dist/` をコミットしない方針なら `.gitignore` に `dist/` を追加する
+- [x] すでにGit管理されている `dist/` を外す (`git rm -r --cached dist/` 実施済み)
+- [x] `package-lock.json` は `npm ci` のためGit管理に残す
 
 ### 0-5. 最低限の公開チェック
 
-- [ ] `npm ci` が成功する
-- [ ] `npm run build` が成功する
-- [ ] GitHub Actionsのデプロイが成功する
-- [ ] 公開URLでトップページが開ける
-- [ ] CSSが読み込まれている
-- [ ] 主要画像が読み込まれている
-- [ ] 画面幅 375px / 768px / 1280px で致命的な崩れがない
+- [x] `npm ci` が成功する
+- [x] `npm run build` が成功する
+- [ ] GitHub Actionsのデプロイが成功する (※ main マージ後に確認)
+- [ ] 公開URLでトップページが開ける (※ デプロイ後に確認)
+- [ ] CSSが読み込まれている (※ デプロイ後に確認)
+- [ ] 主要画像が読み込まれている (※ デプロイ後に確認)
+- [ ] 画面幅 375px / 768px / 1280px で致命的な崩れがない (※ デプロイ後に確認)
 - [ ] 会社名、勤務地、現職詳細、連絡先が入っていない
 - [ ] 非公開リポジトリや内部情報が入っていない
 - [ ] Strava のルート、開始地点、終了地点、心拍が入っていない
@@ -235,18 +234,17 @@ jobs:
 
 ## 人間側で決めること
 
-- [ ] GitHub Pages の公開方式
-  - ユーザー/Organization Pages
-  - プロジェクトPages
-  - 独自ドメイン
-- [ ] GitHub Pages に使うGitHubユーザー名またはOrganization名
-- [ ] リポジトリ名をこのまま `my_portfolio_website` にするか
-- [ ] `dist/` をGit管理から外すか
+- [x] GitHub Pages の公開方式 → プロジェクトPages
+- [x] GitHub Pages に使うGitHubユーザー名またはOrganization名 → `tatsuyakakamu`
+- [x] リポジトリ名をこのまま `my_portfolio_website` にするか → このまま
+- [x] `dist/` をGit管理から外すか → 外す (Actions でビルド)
 - [ ] 未完成のまま公開してよい範囲
 - [ ] 仮画像・仮データのまま公開してよいか
 - [ ] GitHub / Instagram / Strava の外部リンクを公開時点で有効化するか
 - [ ] 会社名、勤務地、現職詳細、連絡先を載せない方針の最終確認
 - [ ] TÜV SÜD 資格情報の掲載内容が正しいかの最終確認
+- [ ] リポジトリを Public に変更する (GitHub UI)
+- [ ] Settings → Pages → Source を `GitHub Actions` に設定する (GitHub UI)
 
 ## Codexに頼めば終わること
 

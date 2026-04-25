@@ -27,6 +27,7 @@ import {
 } from "../data/portfolio";
 import MetricCard from "../components/MetricCard.astro";
 import SectionHeading from "../components/SectionHeading.astro";
+import { asset } from "../lib/asset";
 import "../styles/global.css";
 
 const iconMap = {
@@ -92,7 +93,7 @@ const sectionIconMap = {
       <main>
         <section class="hero panel reveal" aria-labelledby="hero-title">
           <div class="hero-grid">
-            <img class="hero-portrait" src={profile.portrait} alt={profile.portraitAlt} loading="eager" />
+            <img class="hero-portrait" src={asset(profile.portrait)} alt={profile.portraitAlt} loading="eager" />
             <div class="hero-copy">
               <h1 id="hero-title">{profile.title}</h1>
               <p>{profile.tagline}</p>
@@ -159,7 +160,7 @@ const sectionIconMap = {
             {
               projects.map((project) => (
                 <article class="project-card">
-                  <img src={project.screenshot} alt={project.screenshotAlt} loading="lazy" />
+                  <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
                   <div class="project-copy">
                     <h3>{project.name}</h3>
                     <p>{project.description}</p>
@@ -199,7 +200,7 @@ const sectionIconMap = {
           />
           <div class="security-grid">
             <article class="certificate-card">
-              <img class="certificate-mark" src={certification.markImage} alt={certification.markAlt} loading="lazy" />
+              <img class="certificate-mark" src={asset(certification.markImage)} alt={certification.markAlt} loading="lazy" />
               <div class="certificate-copy">
                 <p class="eyebrow">{certification.issuer}</p>
                 <h3>{certification.name}</h3>
@@ -259,7 +260,7 @@ const sectionIconMap = {
             {
               photos.map((photo) => (
                 <figure>
-                  <img src={photo.image} alt={photo.alt} loading="lazy" />
+                  <img src={asset(photo.image)} alt={photo.alt} loading="lazy" />
                   <figcaption>{photo.caption}</figcaption>
                 </figure>
               ))
@@ -315,7 +316,7 @@ const sectionIconMap = {
             theme="about"
           />
           <div class="about-grid">
-            <img src={profile.portrait} alt={profile.portraitAlt} loading="lazy" />
+            <img src={asset(profile.portrait)} alt={profile.portraitAlt} loading="lazy" />
             <div class="about-copy">
               <h3>{profile.name}</h3>
               <div class="badge-row">
