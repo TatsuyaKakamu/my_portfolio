@@ -1,0 +1,32 @@
+---
+import { ArrowRight } from "@lucide/astro";
+
+const { id, title, description, icon: Icon, theme, ctaLabel, disabled = false } = Astro.props;
+---
+
+<div class="section-heading">
+  <div class="heading-main">
+    <span class="section-icon" data-theme={theme}>
+      <Icon size={33} aria-hidden="true" />
+    </span>
+    <div>
+      <h2 id={id}>{title}</h2>
+      <p>{description}</p>
+    </div>
+  </div>
+  {
+    ctaLabel ? (
+      disabled ? (
+        <span class="section-cta is-disabled" aria-disabled="true">
+          {ctaLabel}
+          <ArrowRight size={17} aria-hidden="true" />
+        </span>
+      ) : (
+        <a class="section-cta" href="#">
+          {ctaLabel}
+          <ArrowRight size={17} aria-hidden="true" />
+        </a>
+      )
+    ) : null
+  }
+</div>
