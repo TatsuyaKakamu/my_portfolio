@@ -22,7 +22,7 @@
 - 公開方式: GitHub Actions で `npm run build` を実行し、`dist/` をPagesにデプロイする
 - 想定URL:
   - ユーザー/Organization Pages: `https://<username>.github.io/`
-  - プロジェクトPages: `https://<username>.github.io/my_portfolio_website/`
+  - プロジェクトPages: `https://<username>.github.io/my_portfolio/`
 
 ## 現状メモ
 
@@ -32,8 +32,8 @@
 - [x] `npm run build` は成功する
 - [x] `dist/` は生成済み
 - [x] `astro.config.mjs` の `site` を GitHub Pages 用に更新済み (`https://tatsuyakakamu.github.io`)
-- [x] GitHub Pages の公開URLを確定 (`https://tatsuyakakamu.github.io/my_portfolio_website/`)
-- [x] プロジェクトPages用の `base` 設定 (`/my_portfolio_website`) を反映
+- [x] GitHub Pages の公開URLを確定 (`https://tatsuyakakamu.github.io/my_portfolio/`)
+- [x] プロジェクトPages用の `base` 設定 (`/my_portfolio`) を反映
 - [x] GitHub Actions のPagesデプロイワークフロー (`.github/workflows/deploy.yml`) を実装
 - [x] `.astro/` を `.gitignore` に追加済み
 - [x] `dist/` を `.gitignore` に追加し、Git 管理から除外
@@ -52,7 +52,7 @@
   - 例: `https://<username>.github.io/`
   - リポジトリ名は通常 `<username>.github.io`
 - [x] プロジェクトPagesとして公開するか決める
-  - 採用: `https://tatsuyakakamu.github.io/my_portfolio_website/`
+  - 採用: `https://tatsuyakakamu.github.io/my_portfolio/`
 - [x] 独自ドメインを使うか決める
   - 採用しない (github.io ドメインのまま公開)
 
@@ -76,7 +76,7 @@ export default defineConfig({
 ```js
 export default defineConfig({
   site: "https://<username>.github.io",
-  base: "/my_portfolio_website"
+  base: "/my_portfolio"
 });
 ```
 
@@ -236,7 +236,7 @@ jobs:
 
 - [x] GitHub Pages の公開方式 → プロジェクトPages
 - [x] GitHub Pages に使うGitHubユーザー名またはOrganization名 → `tatsuyakakamu`
-- [x] リポジトリ名をこのまま `my_portfolio_website` にするか → このまま
+- [x] リポジトリ名をこのまま `my_portfolio` にするか → このまま
 - [x] `dist/` をGit管理から外すか → 外す (Actions でビルド)
 - [ ] 未完成のまま公開してよい範囲
 - [ ] 仮画像・仮データのまま公開してよいか
@@ -278,7 +278,7 @@ jobs:
 ## Codexへ依頼するときの例
 
 ```text
-task.md の Phase 0 を実装してください。公開URLは https://<username>.github.io/my_portfolio_website/ です。
+task.md の Phase 0 を実装してください。公開URLは https://<username>.github.io/my_portfolio/ です。
 ```
 
 ```text

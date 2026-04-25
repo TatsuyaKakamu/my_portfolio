@@ -120,14 +120,14 @@ npm run preview
 
 ## 公開時の注意
 
-このサイトは GitHub Pages の `https://tatsuyakakamu.github.io/my_portfolio_website/` に公開されます。
+このサイトは GitHub Pages の `https://tatsuyakakamu.github.io/my_portfolio/` に公開されます。
 
 `astro.config.mjs` は GitHub Pages のプロジェクトページ向けに `site` と `base` を設定しています。
 
 ```js
 export default defineConfig({
   site: "https://tatsuyakakamu.github.io",
-  base: "/my_portfolio_website"
+  base: "/my_portfolio"
 });
 ```
 
