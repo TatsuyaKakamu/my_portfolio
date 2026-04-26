@@ -89,7 +89,7 @@ export const profile: Profile = {
   portrait: "/images/generated/profile-portrait.jpg",
   portraitAlt: "山の展望台に立つ人物の写真風ポートレート",
   badges: [
-    { label: "App Developer", theme: "app" },
+    { label: "App & Web Developer", theme: "app" },
     { label: "Industrial Cybersecurity Learner", theme: "security" },
     { label: "Photographer", theme: "photography" },
     { label: "Runner", theme: "training" }
@@ -98,7 +98,7 @@ export const profile: Profile = {
 
 export const activityAreas: ActivityArea[] = [
   { id: "home", title: "Home", labelJa: "ホーム", theme: "about", icon: "home" },
-  { id: "apps", title: "App Development", labelJa: "アプリ開発", theme: "app", icon: "code" },
+  { id: "apps", title: "Apps & Websites", labelJa: "アプリ・Web制作", theme: "app", icon: "code" },
   { id: "security", title: "Industrial Cybersecurity", labelJa: "産業用サイバーセキュリティ", theme: "security", icon: "shield" },
   { id: "photography", title: "Photography", labelJa: "写真", theme: "photography", icon: "camera" },
   { id: "training", title: "Training", labelJa: "トレーニング", theme: "training", icon: "runner" },
