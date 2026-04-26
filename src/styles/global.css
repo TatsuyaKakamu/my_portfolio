@@ -412,8 +412,10 @@ a,
 
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  max-width: 960px;
+  margin: 0 auto;
 }
 
 .project-card {
@@ -458,6 +460,23 @@ a,
 .project-card:hover .project-shot img,
 .project-shot:focus-visible img {
   transform: scale(1.025);
+}
+
+.project-shot.is-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  color: rgb(93 107 128 / 70%);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.project-shot.is-placeholder svg {
+  opacity: 0.55;
 }
 
 .project-copy {

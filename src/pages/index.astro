@@ -8,6 +8,7 @@ import {
   ExternalLink,
   Flame,
   House,
+  Image as ImageIcon,
   Link as LinkIcon,
   MapPinned,
   Route,
@@ -80,7 +81,7 @@ const sectionIconMap = {
               return (
                 <a class="nav-link" href={`#${item.id}`}>
                   <Icon size={17} aria-hidden="true" />
-                  <span>{item.title.replace("App Development", "Apps").replace("Industrial Cybersecurity", "Security")}</span>
+                  <span>{item.title.replace("Apps & Websites", "Apps & Web").replace("Industrial Cybersecurity", "Security")}</span>
                 </a>
               );
             })
@@ -147,8 +148,8 @@ const sectionIconMap = {
         <section class="panel section section-app reveal" id="apps" aria-labelledby="apps-title">
           <SectionHeading
             id="apps-title"
-            title="App Development"
-            description="効率的で美しいモバイル・業務用アプリを開発しています。"
+            title="Apps & Websites"
+            description="効率的で美しいアプリと Web サイトを制作しています。"
             icon={sectionIconMap.apps}
             theme="app"
             ctaLabel="すべてのプロジェクトを見る"
@@ -156,36 +157,44 @@ const sectionIconMap = {
           />
           <div class="project-grid">
             {
-              projects.map((project) => (
-                <article class="project-card">
-                  {
-                    project.repositoryUrl ? (
+              projects.map((project) => {
+                const hasShot = Boolean(project.screenshot);
+                const shotClass = `project-shot${hasShot ? "" : " is-placeholder"}`;
+                const shotInner = hasShot ? (
+                  <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
+                ) : (
+                  <Fragment>
+                    <ImageIcon size={28} aria-hidden="true" />
+                    <span>プレビュー準備中</span>
+                  </Fragment>
+                );
+                return (
+                  <article class="project-card">
+                    {project.repositoryUrl ? (
                       <a
-                        class="project-shot"
+                        class={shotClass}
                         href={project.repositoryUrl}
                         target="_blank"
                         rel="noreferrer"
                         aria-label={`${project.name} のGitHubリポジトリを開く`}
                       >
-                        <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
+                        {shotInner}
                       </a>
                     ) : (
-                      <span class="project-shot">
-                        <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
-                      </span>
-                    )
-                  }
-                  <div class="project-copy">
-                    <h3>{project.name}</h3>
-                    <p>{project.description}</p>
-                    <div class="tag-row" aria-label={`${project.name} tech stack`}>
-                      {project.techStack.map((tech) => (
-                        <span>{tech}</span>
-                      ))}
+                      <span class={shotClass}>{shotInner}</span>
+                    )}
+                    <div class="project-copy">
+                      <h3>{project.name}</h3>
+                      <p>{project.description}</p>
+                      <div class="tag-row" aria-label={`${project.name} tech stack`}>
+                        {project.techStack.map((tech) => (
+                          <span>{tech}</span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))
+                  </article>
+                );
+              })
             }
           </div>
         </section>
