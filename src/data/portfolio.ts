@@ -106,7 +106,7 @@ export const activityAreas: ActivityArea[] = [
 ];
 
 export const externalLinks: ExternalLink[] = [
-  { label: "GitHub", url: "", icon: "github", status: "coming-soon" },
+  { label: "GitHub", url: "https://github.com/TatsuyaKakamu", icon: "github", status: "ready" },
   {
     label: "TÜV SÜD",
     url: "https://www.tuvsud.com/ja-jp/services/training/ac/psms/com-iec62443-foundation/certified-persons",
