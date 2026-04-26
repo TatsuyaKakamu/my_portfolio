@@ -35,9 +35,6 @@ export interface Project {
   techStack: string[];
   repositoryUrl: string;
   demoUrl?: string;
-  stars: number;
-  forks: number;
-  updatedAt: string;
   featured: boolean;
   lastFetchedAt: string;
 }
@@ -122,16 +119,13 @@ export const externalLinks: ExternalLink[] = [
 
 export const projects: Project[] = [
   {
-    name: "RunLog",
-    description: "ランニングの記録整理を行えるモバイルアプリ",
-    purpose: "習慣の見える化と記録の継続を支えるための個人向けログアプリ。",
-    screenshot: "/images/generated/app-runlog.png",
-    screenshotAlt: "ランニング記録アプリのダークモード画面",
-    techStack: ["iOS", "SwiftUI", "ActivityKit"],
-    repositoryUrl: "",
-    stars: 32,
-    forks: 21,
-    updatedAt: "2024/04/20",
+    name: "MLX Audio Transcriptor",
+    description: "wav/mp3をドラッグ&ドロップで文字起こしし、*.mdで出力するMacアプリ",
+    purpose: "Apple Silicon上でローカル音声文字起こしを手軽に実行するためのMacアプリ。",
+    screenshot: "/images/generated/app-mlx-audio-transcriptor.png",
+    screenshotAlt: "音声ファイルをAIで文字起こししてMarkdownに出力するMacアプリの画面",
+    techStack: ["macOS", "Python", "mlx-whisper", "VAD"],
+    repositoryUrl: "https://github.com/TatsuyaKakamu/mlx-audio-transcriptor",
     featured: true,
     lastFetchedAt: "2026-04-24T00:00:00+09:00"
   },
@@ -143,9 +137,6 @@ export const projects: Project[] = [
     screenshotAlt: "産業用セキュリティ監視アプリのダッシュボード画面",
     techStack: ["Security", "Flask", "PostgreSQL"],
     repositoryUrl: "",
-    stars: 76,
-    forks: 18,
-    updatedAt: "2024/03/10",
     featured: true,
     lastFetchedAt: "2026-04-24T00:00:00+09:00"
   },
@@ -157,9 +148,6 @@ export const projects: Project[] = [
     screenshotAlt: "写真管理と地図表示を組み合わせたアプリ画面",
     techStack: ["iOS", "SwiftUI", "MapKit"],
     repositoryUrl: "",
-    stars: 54,
-    forks: 17,
-    updatedAt: "2024/01/05",
     featured: true,
     lastFetchedAt: "2026-04-24T00:00:00+09:00"
   }
