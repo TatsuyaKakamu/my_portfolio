@@ -130,26 +130,16 @@ export const projects: Project[] = [
     lastFetchedAt: "2026-04-24T00:00:00+09:00"
   },
   {
-    name: "Secure Device Monitor",
-    description: "産業用機器のセキュリティ状態を確認するダッシュボード",
-    purpose: "設備の状態を集約し、リスク傾向を把握しやすくする実験的な監視UI。",
-    screenshot: "/images/generated/app-secure-monitor.png",
-    screenshotAlt: "産業用セキュリティ監視アプリのダッシュボード画面",
-    techStack: ["Security", "Flask", "PostgreSQL"],
-    repositoryUrl: "",
+    name: "Photographer Demo Site",
+    description: "自動車写真家向けの高級感あるポートフォリオデモサイト。シーン別ギャラリー、見積もり、フォーム挙動シミュレーションを備える。",
+    purpose: "Web サイト制作の事例として、写真家向けポートフォリオの UI / 機能をまとめた公開デモ。",
+    screenshot: "",
+    screenshotAlt: "",
+    techStack: ["JavaScript", "CSS", "HTML", "Node.js"],
+    repositoryUrl: "https://github.com/TatsuyaKakamu/photographer_demo_site",
+    demoUrl: "https://tatsuyakakamu.github.io/photographer_demo_site/",
     featured: true,
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
-  },
-  {
-    name: "Photo Map",
-    description: "撮影した写真を地図上で表示・共有するアプリ",
-    purpose: "生活圏を推測できる詳細位置は出さず、旅や撮影の記録を整理するための写真管理UI。",
-    screenshot: "/images/generated/app-photo-map.png",
-    screenshotAlt: "写真管理と地図表示を組み合わせたアプリ画面",
-    techStack: ["iOS", "SwiftUI", "MapKit"],
-    repositoryUrl: "",
-    featured: true,
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
+    lastFetchedAt: "2026-04-26T00:00:00+09:00"
   }
 ];
 

@@ -45,10 +45,11 @@
 - [x] `.astro/` を `.gitignore` に追加済み
 - [x] `dist/` を `.gitignore` に追加し、Git 管理から除外
 - [ ] プロフィール画像、アプリ画像、写真はダミーまたは生成画像
-- [ ] Apps セクションは現在 3 カード前提のレイアウトだが、紹介対象は 2 件のみのため 2 カード前提に変更が必要
-- [ ] セクション名 (`App Development` → `Apps & Websites`) とバッジ (`App Developer` → `App & Web Developer`) のリネームが未反映
-- [ ] `projects` 配列に 3 件目の仮データ (`Photo Map` または `Secure Device Monitor`) が残っており、Web サイト制作枠への置き換えが未対応
-- [ ] Apps のプロジェクト名、説明、技術スタック、更新日は仮データ
+- [x] Apps セクションを 2 カード前提のレイアウトに変更済み (`.project-grid` を `repeat(2, ...)` + `max-width: 960px` に変更)
+- [x] セクション名 (`App Development` → `Apps & Websites`) とバッジ (`App Developer` → `App & Web Developer`) のリネームを反映済み
+- [x] `projects` を `MLX Audio Transcriptor` + `Photographer Demo Site` の 2 件構成に整理済み
+- [ ] `Photographer Demo Site` のスクリーンショット画像が未準備のため、画像領域は仮プレースホルダブロック (アイコン + 「プレビュー準備中」) で表示中
+- [ ] Apps のプロジェクト名、説明、技術スタック、更新日は仮データ (Photographer Demo Site は概要を仮設定)
 - [ ] GitHub / Instagram / Strava の外部リンクは未設定 (準備中表示のまま)
 - [ ] Strava の集計値は仮データ
 
@@ -179,29 +180,25 @@ jobs:
 
 データ (`src/data/portfolio.ts`):
 
-- [ ] `activityAreas` の `apps` エントリをリネームする
-  - `title`: `App Development` → `Apps & Websites`
-  - `labelJa`: `アプリ開発` → `アプリ・Web制作`
-- [ ] `profile.badges` の `App Developer` を `App & Web Developer` に変更する
-- [ ] `projects` を実際に紹介する 2 件のみに整理する
+- [x] `activityAreas` の `apps` エントリをリネーム (`title`: `Apps & Websites` / `labelJa`: `アプリ・Web制作`)
+- [x] `profile.badges` の `App Developer` を `App & Web Developer` に変更
+- [x] `projects` を実際に紹介する 2 件のみに整理
   - 残す: `MLX Audio Transcriptor`
-  - 追加: Web サイト制作枠 1 件 (具体的な対象 = このポートフォリオ自身を載せるか、別の Web サイトを載せるかは差し替え時に確定する)
-  - 削除: 残りの仮データプロジェクト (`Secure Device Monitor` / `Photo Map`)
+  - 追加: `Photographer Demo Site` (https://github.com/TatsuyaKakamu/photographer_demo_site / デモ: https://tatsuyakakamu.github.io/photographer_demo_site/)
+  - 削除: `Secure Device Monitor` / `Photo Map`
 
 ページ構造 (`src/pages/index.astro`):
 
-- [ ] navigation ラベル (現状 `App Development` を `Apps` に短縮している箇所) を `Apps & Web` に更新する
-- [ ] Apps セクションの `SectionHeading` の `title` を `Apps & Websites` に変更し、`description` も「アプリと Web サイトを制作しています。」など実態に合うものに更新する
+- [x] navigation ラベルの短縮処理を `Apps & Websites` → `Apps & Web` に更新
+- [x] Apps セクションの `SectionHeading` の `title` を `Apps & Websites` に、`description` を「効率的で美しいアプリと Web サイトを制作しています。」に変更
+- [x] `screenshot` が空のプロジェクトは画像の代わりに仮プレースホルダブロック (Lucide `Image` アイコン + 「プレビュー準備中」) を表示するよう `project-shot` の描画を分岐
 
 レイアウト (`src/styles/global.css`):
 
-- [ ] `.project-grid` を 2 カード構成でバランスが取れるレイアウトに変更する
-  - デスクトップ: `grid-template-columns: repeat(2, minmax(0, 1fr))` を基本にし、カード幅と画像比率を再調整する
-  - カード自体が極端に大きく / 横長になりすぎないよう、最大幅または `max-width` を設定する
-  - タブレット幅 (例: 768px) で 1 カード時の見え方も確認する
-  - スマートフォン幅 (375px) では 1 列にして縦に積む
-- [ ] 2 カードでも余白・画像比率・タグの並びが崩れないことを 375px / 768px / 1280px で確認する
-- [ ] 「すべてのプロジェクトを見る」CTA は紹介対象が増えるまで `disabled` のままにする
+- [x] `.project-grid` を `grid-template-columns: repeat(2, minmax(0, 1fr))` + `max-width: 960px; margin: 0 auto` に変更
+- [x] `.project-shot.is-placeholder` のスタイルを追加 (アスペクト比 3/2、薄いラベル + アイコン)
+- [ ] 2 カードでも余白・画像比率・タグの並びが崩れないことを 375px / 768px / 1280px の実機 / DevTools で確認する (※ デプロイ後に追加チェック)
+- [ ] 「すべてのプロジェクトを見る」CTA は紹介対象が増えるまで `disabled` のままにする (現状維持)
 
 備考:
 
