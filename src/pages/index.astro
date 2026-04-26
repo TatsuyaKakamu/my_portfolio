@@ -2,16 +2,15 @@
 import {
   Activity,
   BadgeCheck,
-  CalendarDays,
   Camera,
+  Clock,
   CodeXml,
   ExternalLink,
   Flame,
+  Hourglass,
   House,
   Image as ImageIcon,
   Link as LinkIcon,
-  MapPinned,
-  Route,
   ShieldCheck,
   UserRound
 } from "@lucide/astro";
@@ -298,24 +297,42 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
             icon={sectionIconMap.training}
             theme="training"
             ctaLabel="Strava を見る"
-            disabled
+            ctaHref={training.stravaUrl}
+            disabled={!training.stravaUrl}
           />
-          <div class="metric-grid">
-            <MetricCard icon={CalendarDays} label="今月のアクティビティ" value={training.summary.activitiesThisMonth} unit="日" note="前月比 +2日" />
-            <MetricCard icon={MapPinned} label="今月の総距離" value={training.summary.distanceKmThisMonth} unit="km" note="前月比 +21.5km" />
-            <MetricCard icon={Activity} label="今年のアクティビティ" value={training.summary.activityCountYear} unit="回" note="前年比 -14%" />
-            <MetricCard icon={Route} label="今年の総獲得" value={training.summary.distanceKmYear} unit="km" note="前年比 +128km" />
-            <MetricCard icon={Flame} label="継続習慣" value={training.summary.streakDays} unit="日" note="自己ベスト更新中！" />
+          <div class="metric-grid metric-grid--three">
+            <MetricCard
+              icon={Clock}
+              label="先月の総トレーニング"
+              value={training.lastMonthTotalHours}
+              unit="時間"
+              note={`前月比 ${training.lastMonthDeltaHours >= 0 ? "+" : ""}${training.lastMonthDeltaHours.toFixed(1)}時間`}
+            />
+            <MetricCard
+              icon={Hourglass}
+              label="今年の総トレーニング時間"
+              value={training.yearTotalHours}
+              unit="時間"
+              note={`${training.period.year}年`}
+            />
+            <MetricCard
+              icon={Flame}
+              label="総継続習慣"
+              value={training.streak.label}
+              unit=""
+              note={`${training.streak.startDate} から継続中`}
+              cardClass="metric-card--streak"
+            />
           </div>
           <div class="training-board">
-            <div class="bar-chart" aria-label="週のトレーニング距離">
-              <h3>週のトレーニング距離（km）</h3>
+            <div class="bar-chart" aria-label="月のトレーニング時間">
+              <h3>月のトレーニング時間（h）</h3>
               <div class="bars">
                 {
-                  training.weeklyDistances.map((entry) => (
+                  training.monthlyHours.map((entry) => (
                     <div class="bar-item">
-                      <span>{entry.distanceKm}</span>
-                      <i style={`height: ${Math.max(18, entry.distanceKm * 0.6)}px`} aria-hidden="true"></i>
+                      <span>{entry.hours}</span>
+                      <i style={`height: ${Math.max(18, Math.min(104, entry.hours * 4))}px`} aria-hidden="true"></i>
                       <small>{entry.label}</small>
                     </div>
                   ))
@@ -323,8 +340,8 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
               </div>
             </div>
             <div class="monthly-average">
-              <span>月平均</span>
-              <strong>{training.summary.monthlyAverageKm} km</strong>
+              <span>6ヶ月平均</span>
+              <strong>{training.averageMonthlyHours} h</strong>
             </div>
           </div>
         </section>

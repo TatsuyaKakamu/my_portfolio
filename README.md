@@ -59,10 +59,16 @@ npm run preview
 │   └── images/              # サイトで使う画像
 ├── requirement/
 │   └── portfolio_requirements.md
+├── scripts/
+│   ├── lib/
+│   │   └── strava.mjs       # Strava 取得・集計の共通ヘルパー
+│   ├── strava-bootstrap.mjs # 初回手動実行用 (全履歴から training-data.json を生成)
+│   └── strava-update-monthly.mjs  # 月次差分更新 (cron 用、先月分のみ取得)
 ├── src/
 │   ├── components/          # Astro コンポーネント
 │   ├── data/
-│   │   └── portfolio.ts     # プロフィール・実績・資格・写真・トレーニングデータ
+│   │   ├── portfolio.ts     # プロフィール・実績・資格・写真・トレーニングデータ
+│   │   └── training-data.json  # Strava 集計値 (スクリプトが書き換える)
 │   ├── pages/
 │   │   └── index.astro      # トップページ
 │   └── styles/
@@ -87,20 +93,37 @@ npm run preview
 
 ## 外部サービス連携
 
-現時点では外部サービスの自動取得は未実装です。GitHub、Instagram、Strava のURLは準備中として扱っています。
-
 現在リンク済みの外部サービス:
 
 - TÜV SÜD 資格検証ページ
+- Strava (集計値のみを月次で自動更新)
 
-将来的には以下のような連携を想定しています。
+GitHub と Instagram の自動連携は未実装で、URL は準備中扱いです。
 
-- GitHub API による公開リポジトリ情報の取得
-- Strava API による位置情報を除いた集計データの取得
-- Instagram の公式APIまたは公式埋め込みによる代表投稿の表示
-- TÜV SÜD 資格ページの掲載状態確認
+### Strava 月次自動更新
 
-外部API連携を追加する場合は、APIキーやアクセストークンをクライアント側に露出しないようにしてください。
+`src/data/training-data.json` を Strava API から月次で再生成し、`main` に直接コミットします。これにより `deploy.yml` が連鎖発火して GitHub Pages が更新されます。
+
+必要な GitHub Secrets:
+
+- `STRAVA_CLIENT_ID`
+- `STRAVA_CLIENT_SECRET`
+- `STRAVA_REFRESH_TOKEN` (scope: `activity:read_all`)
+
+実行系統:
+
+- **初回 (手動 1 回)**: ローカルで bootstrap を実行し、過去全アクティビティから `training-data.json` を生成・コミットする。
+  ```bash
+  STRAVA_CLIENT_ID=... STRAVA_CLIENT_SECRET=... STRAVA_REFRESH_TOKEN=... \
+    node scripts/strava-bootstrap.mjs
+  git add src/data/training-data.json
+  git commit -m "feat(strava): bootstrap training data"
+  git push
+  ```
+- **月次 (自動)**: `.github/workflows/update-strava.yml` が毎月 1 日 09:00 JST (= 00:00 UTC) に `scripts/strava-update-monthly.mjs` を実行し、先月分のアクティビティだけを取得して JSON を増分更新・自動コミットする。Actions タブから `workflow_dispatch` で手動実行も可能。
+- **失敗時**: スクリプトは非ゼロで終了し、JSON は変更されないため、サイトには最後に取得した値が表示され続ける。
+
+API キーやトークンはクライアント側に露出させないでください (Secrets と Actions のジョブ環境内でのみ使用)。
 
 ## プライバシー方針
 

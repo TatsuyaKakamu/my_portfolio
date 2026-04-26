@@ -1,3 +1,5 @@
+import trainingData from "./training-data.json";
+
 export type Theme = "app" | "security" | "photography" | "training" | "about";
 
 export interface Profile {
@@ -62,21 +64,37 @@ export interface PhotoItem {
   lastFetchedAt: string;
 }
 
+export interface TrainingMonthlyEntry {
+  month: string;
+  label: string;
+  hours: number;
+}
+
+export interface TrainingStreak {
+  weeks: number;
+  startDate: string;
+  label: string;
+}
+
+export interface TrainingPeriod {
+  from: string;
+  to: string;
+  lastMonth: string;
+  year: number;
+}
+
 export interface TrainingSummary {
   stravaUrl: string;
   theme: "training";
-  summary: {
-    period: string;
-    activitiesThisMonth: number;
-    distanceKmThisMonth: number;
-    activityCountYear: number;
-    distanceKmYear: number;
-    streakDays: number;
-    monthlyAverageKm: number;
-    note: string;
-    lastFetchedAt: string;
-  };
-  weeklyDistances: Array<{ label: string; distanceKm: number }>;
+  lastFetchedAt: string;
+  period: TrainingPeriod;
+  lastMonthTotalHours: number;
+  previousMonthTotalHours: number;
+  lastMonthDeltaHours: number;
+  averageMonthlyHours: number;
+  yearTotalHours: number;
+  monthlyHours: TrainingMonthlyEntry[];
+  streak: TrainingStreak;
 }
 
 export const profile: Profile = {
@@ -199,23 +217,5 @@ export const photos: PhotoItem[] = [
 export const training: TrainingSummary = {
   stravaUrl: "",
   theme: "training",
-  summary: {
-    period: "2026-04",
-    activitiesThisMonth: 12,
-    distanceKmThisMonth: 102.4,
-    activityCountYear: 86,
-    distanceKmYear: 782.6,
-    streakDays: 156,
-    monthlyAverageKm: 956,
-    note: "継続的なトレーニング習慣を、位置情報や健康詳細を出さない集計値として表示しています。",
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
-  },
-  weeklyDistances: [
-    { label: "11/18", distanceKm: 88.2 },
-    { label: "12/8", distanceKm: 65.7 },
-    { label: "1/5", distanceKm: 73.1 },
-    { label: "2/9", distanceKm: 111.3 },
-    { label: "3/8", distanceKm: 116.8 },
-    { label: "4/6", distanceKm: 102.4 }
-  ]
+  ...(trainingData as Omit<TrainingSummary, "stravaUrl" | "theme">)
 };

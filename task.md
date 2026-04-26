@@ -250,24 +250,34 @@ jobs:
 - [ ] Google Search Consoleに登録する
 - [ ] SNS共有時の表示を確認する
 
-## Phase 3: Strava 集計値の自動更新を検討する
+## Phase 3: Strava 集計値の自動更新
 
-Strava の集計値だけは、本人の生活圏や健康状態を推測できる情報を保存しない前提で、自動更新を検討対象として残します。実施タイミングは GitHub Pages 公開と Phase 1 / Phase 2 が落ち着いたあとを想定します。
+Strava の集計値だけを、生活圏や健康詳細を推測させない前提で月一回・自動更新する。実装は `claude/strava-data-retrieval-OGgpO` ブランチで完了。
 
-検討項目:
+確定仕様:
 
-- [ ] Strava API から取得する項目を「公開してよい集計値だけ」に限定する仕様を定義する
-- [ ] Strava 連携用の GitHub Actions ワークフローを設計する (定期実行 + 失敗時のフォールバック)
-- [ ] Strava の API キー / アクセストークンを GitHub Secrets で管理する
-- [ ] 生成された集計値を `src/data/portfolio.ts` に書き戻す経路を決める (静的データ更新 PR / コミット / 別の JSON ファイルなど)
-- [ ] API 取得失敗時に公開サイトが壊れず、最後の取得値を表示し続ける挙動を担保する
+- 集計対象: 全アクティビティ種別の `moving_time` (時間に変換)。位置情報・心拍・ルートは保存しない。
+- 更新頻度: 毎月 1 日 09:00 JST に GitHub Actions cron で実行。
+- 表示カード: 「先月の総トレーニング (時間)」「今年の総トレーニング時間 (時間)」「総継続習慣 (X年Yヶ月Z週間)」の 3 枚。
+- 下段グラフ: 直近 6 ヶ月の月別総時間 + 6 ヶ月平均。
+- 取得失敗時: スクリプトが exit 1。JSON は変更されず、サイトには最後の取得値が残る。
 
-保存しないと決めるもの (Strava 自動更新を実装する場合の制約):
+実装内訳:
 
-- [ ] Strava の生ルート、緯度経度、開始地点、終了地点
-- [ ] 心拍などの詳細な健康情報
-- [ ] API キー / アクセストークンをクライアント側に露出しない
-- [ ] 取得失敗時は既存の表示を維持し、エラー詳細はサイト上に出さない
+- [x] Strava API から取得する項目を「公開してよい集計値だけ」(`moving_time` / `start_date_local`) に限定
+- [x] Strava 連携用の GitHub Actions ワークフロー (`.github/workflows/update-strava.yml`) を作成 (月次 cron + workflow_dispatch + 失敗時のフォールバック)
+- [x] Strava の API キー / アクセストークンを GitHub Secrets で管理 (`STRAVA_CLIENT_ID` / `STRAVA_CLIENT_SECRET` / `STRAVA_REFRESH_TOKEN`)
+- [x] 集計値の書き戻し経路を決定 → 別 JSON (`src/data/training-data.json`) を Workflow が直接書き換え、`portfolio.ts` は import のみ
+- [x] API 取得失敗時に公開サイトが壊れず、最後の取得値を表示し続ける挙動を担保 (exit 1 で JSON 不変・コミットなし)
+- [x] 初回データ生成用の bootstrap スクリプト (`scripts/strava-bootstrap.mjs`) を整備し、ローカル手動実行 → 手動コミット運用とする
+- [x] 月次差分更新スクリプト (`scripts/strava-update-monthly.mjs`) を整備し、先月分のみを取得して増分更新する
+
+保存しないと決めたもの:
+
+- [x] Strava の生ルート、緯度経度、開始地点、終了地点 (取得後すぐ破棄)
+- [x] 心拍などの詳細な健康情報
+- [x] API キー / アクセストークンをクライアント側に露出しない (Secrets で管理)
+- [x] 取得失敗時は既存の表示を維持し、エラー詳細はサイト上に出さない
 
 ## スコープ外 (当面やらないこと)
 

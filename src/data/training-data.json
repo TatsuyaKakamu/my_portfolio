@@ -1,0 +1,27 @@
+{
+  "lastFetchedAt": "2026-04-26T00:00:00+09:00",
+  "period": {
+    "from": "2025-11",
+    "to": "2026-04",
+    "lastMonth": "2026-03",
+    "year": 2026
+  },
+  "lastMonthTotalHours": 0,
+  "previousMonthTotalHours": 0,
+  "lastMonthDeltaHours": 0,
+  "averageMonthlyHours": 0,
+  "yearTotalHours": 0,
+  "monthlyHours": [
+    { "month": "2025-11", "label": "11月", "hours": 0 },
+    { "month": "2025-12", "label": "12月", "hours": 0 },
+    { "month": "2026-01", "label": "1月", "hours": 0 },
+    { "month": "2026-02", "label": "2月", "hours": 0 },
+    { "month": "2026-03", "label": "3月", "hours": 0 },
+    { "month": "2026-04", "label": "4月", "hours": 0 }
+  ],
+  "streak": {
+    "weeks": 0,
+    "startDate": "2026-04-20",
+    "label": "0年0ヶ月0週間"
+  }
+}
