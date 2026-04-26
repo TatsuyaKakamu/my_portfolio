@@ -7,13 +7,11 @@ import {
   CodeXml,
   ExternalLink,
   Flame,
-  GitFork,
   House,
   Link as LinkIcon,
   MapPinned,
   Route,
   ShieldCheck,
-  Star,
   UserRound
 } from "@lucide/astro";
 import {
@@ -160,7 +158,23 @@ const sectionIconMap = {
             {
               projects.map((project) => (
                 <article class="project-card">
-                  <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
+                  {
+                    project.repositoryUrl ? (
+                      <a
+                        class="project-shot"
+                        href={project.repositoryUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${project.name} のGitHubリポジトリを開く`}
+                      >
+                        <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
+                      </a>
+                    ) : (
+                      <span class="project-shot">
+                        <img src={asset(project.screenshot)} alt={project.screenshotAlt} loading="lazy" />
+                      </span>
+                    )
+                  }
                   <div class="project-copy">
                     <h3>{project.name}</h3>
                     <p>{project.description}</p>
@@ -170,20 +184,6 @@ const sectionIconMap = {
                       ))}
                     </div>
                   </div>
-                  <footer class="project-meta">
-                    <span>
-                      <Star size={15} aria-hidden="true" />
-                      {project.stars}
-                    </span>
-                    <span>
-                      <GitFork size={15} aria-hidden="true" />
-                      {project.forks}
-                    </span>
-                    <span>最終更新: {project.updatedAt}</span>
-                    <span class="project-link" aria-label="GitHub URL is coming soon">
-                      <CodeXml size={18} aria-hidden="true" />
-                    </span>
-                  </footer>
                 </article>
               ))
             }
