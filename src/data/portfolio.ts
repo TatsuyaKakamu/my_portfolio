@@ -85,9 +85,9 @@ export const profile: Profile = {
   title: "アプリを作り、産業用サイバーセキュリティを学び、写真を撮り、日々トレーニングを続けています。",
   tagline: "Building apps, learning industrial cybersecurity, capturing moments, and training consistently.",
   summary:
-    "モバイル・業務用アプリ、インフラの自動化、セキュリティ、産業用サイバーセキュリティの学習に取り組みながら、写真とトレーニングを通じて日々を記録しています。",
+    "写真とトレーニングを通じて心身を整えながら、アプリ・Webサイト開発、業務の自動化、産業用サイバーセキュリティの学習に日々取り組んでいます。",
   portrait: "/images/generated/profile-portrait.jpg",
-  portraitAlt: "山の展望台に立つ人物の写真風ポートレート",
+  portraitAlt: "サイクルジャージ姿で賞状を持つ人物のモノクロ調ポートレート",
   badges: [
     { label: "App & Web Developer", theme: "app" },
     { label: "Industrial Cybersecurity Learner", theme: "security" },
