@@ -50,6 +50,7 @@ const sectionIconMap = {
   training: Activity,
   about: UserRound
 };
+const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.url;
 ---
 
 <!doctype html>
@@ -263,7 +264,7 @@ const sectionIconMap = {
             icon={sectionIconMap.photography}
             theme="photography"
             ctaLabel="Instagram を見る"
-            disabled
+            ctaHref={instagramUrl}
           />
           <div class="photo-grid">
             {

@@ -113,7 +113,7 @@ export const externalLinks: ExternalLink[] = [
     icon: "tuv",
     status: "ready"
   },
-  { label: "Instagram", url: "", icon: "instagram", status: "coming-soon" },
+  { label: "Instagram", url: "https://www.instagram.com/t_kakamu_/", icon: "instagram", status: "ready" },
   { label: "Strava", url: "", icon: "strava", status: "coming-soon" }
 ];
 
@@ -160,39 +160,39 @@ export const certification: Certification = {
 
 export const photos: PhotoItem[] = [
   {
-    image: "/images/generated/photo-lake.jpg",
-    alt: "雪山が湖面に映る静かな山岳湖",
-    caption: "Alpine lake",
+    image: "/images/photos/snowy-sunrise.jpg",
+    alt: "雪の積もった山道から朝焼けと海を望む風景",
+    caption: "雪山の朝焼け",
     postUrl: "",
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
+    lastFetchedAt: "2026-04-26T00:00:00+09:00"
   },
   {
-    image: "/images/generated/photo-street.jpg",
-    alt: "夕日の差し込む古い街並みの路地",
-    caption: "Evening street",
+    image: "/images/photos/red-lantern-steps.jpg",
+    alt: "赤い灯籠が並ぶ石段の参道を歩く人たち",
+    caption: "朱灯籠の参道",
     postUrl: "",
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
+    lastFetchedAt: "2026-04-26T00:00:00+09:00"
   },
   {
-    image: "/images/generated/photo-hydrangea.jpg",
-    alt: "雨上がりの紫陽花",
-    caption: "Hydrangea",
+    image: "/images/photos/cherry-blossoms.jpg",
+    alt: "桜の花の下で帽子をかぶった子どもが立つ春の風景",
+    caption: "桜の下で",
     postUrl: "",
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
+    lastFetchedAt: "2026-04-26T00:00:00+09:00"
   },
   {
-    image: "/images/generated/photo-sea.jpg",
-    alt: "夕暮れの穏やかな海と雲",
-    caption: "Dusk sea",
+    image: "/images/photos/city-skyline.jpg",
+    alt: "高層ビルが並ぶ都市のスカイラインと広い道路",
+    caption: "都市の朝",
     postUrl: "",
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
+    lastFetchedAt: "2026-04-26T00:00:00+09:00"
   },
   {
-    image: "/images/generated/photo-autumn.jpg",
-    alt: "紅葉に囲まれた静かな寺社の風景",
-    caption: "Autumn shrine",
+    image: "/images/photos/mountain-bridge.jpg",
+    alt: "山あいに架かる吊り橋と朝日に照らされた霧",
+    caption: "山あいの吊り橋",
     postUrl: "",
-    lastFetchedAt: "2026-04-24T00:00:00+09:00"
+    lastFetchedAt: "2026-04-26T00:00:00+09:00"
   }
 ];
 
