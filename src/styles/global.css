@@ -39,6 +39,20 @@ body {
   color: var(--text);
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 19;
+  height: 14px;
+  background: rgb(247 248 251 / 72%);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  pointer-events: none;
+}
+
 body,
 button,
 input {
@@ -889,6 +903,10 @@ a,
   .site-shell {
     width: min(100% - 18px, 1280px);
     margin-top: 9px;
+  }
+
+  body::before {
+    height: 9px;
   }
 
   .topbar {
