@@ -774,6 +774,66 @@ a,
   width: min(64px, 88%);
   border-radius: 4px 4px 0 0;
   background: linear-gradient(180deg, #ffae69, var(--training));
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.section-training.is-visible .bar-item i {
+  transform: scaleY(1);
+}
+
+.section-training .bar-item span,
+.section-training .metric-value {
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 600ms ease,
+    transform 600ms ease;
+}
+
+.section-training.is-visible .bar-item span,
+.section-training.is-visible .metric-value {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-training .bar-item:nth-child(1) i,
+.section-training .bar-item:nth-child(1) span {
+  transition-delay: 80ms;
+}
+.section-training .bar-item:nth-child(2) i,
+.section-training .bar-item:nth-child(2) span {
+  transition-delay: 160ms;
+}
+.section-training .bar-item:nth-child(3) i,
+.section-training .bar-item:nth-child(3) span {
+  transition-delay: 240ms;
+}
+.section-training .bar-item:nth-child(4) i,
+.section-training .bar-item:nth-child(4) span {
+  transition-delay: 320ms;
+}
+.section-training .bar-item:nth-child(5) i,
+.section-training .bar-item:nth-child(5) span {
+  transition-delay: 400ms;
+}
+.section-training .bar-item:nth-child(6) i,
+.section-training .bar-item:nth-child(6) span {
+  transition-delay: 480ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-training .bar-item i {
+    transform: scaleY(1);
+    transition: none;
+  }
+  .section-training .bar-item span,
+  .section-training .metric-value {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 .bar-item small {
