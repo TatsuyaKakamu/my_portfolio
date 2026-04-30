@@ -75,7 +75,7 @@ const streakParts = Array.from(
           <span>{profile.name}</span>
         </a>
         <nav class="nav-links" aria-label="Section navigation">
-          <a class="nav-link is-active" href="#home">
+          <a class="nav-link" href="#home" data-nav-target="home">
             <House size={17} aria-hidden="true" />
             <span>Home</span>
           </a>
@@ -83,7 +83,7 @@ const streakParts = Array.from(
             navItems.map((item) => {
               const Icon = iconMap[item.icon];
               return (
-                <a class="nav-link" href={`#${item.id}`}>
+                <a class="nav-link" href={`#${item.id}`} data-nav-target={item.id}>
                   <Icon size={17} aria-hidden="true" />
                   <span>{item.title.replace("Apps & Websites", "Apps & Web").replace("Industrial Cybersecurity", "Security")}</span>
                 </a>
@@ -454,6 +454,40 @@ const streakParts = Array.from(
         { threshold: 0.14 }
       );
       sections.forEach((section) => observer.observe(section));
+
+      const navLinks = Array.from(
+        document.querySelectorAll<HTMLAnchorElement>(".nav-link[data-nav-target]")
+      );
+      const navTargets = navLinks
+        .map((link) => {
+          const id = link.dataset.navTarget;
+          const el = id ? document.getElementById(id) : null;
+          return el ? { link, el } : null;
+        })
+        .filter((entry): entry is { link: HTMLAnchorElement; el: HTMLElement } => entry !== null);
+
+      const setActive = (id: string) => {
+        navLinks.forEach((link) => {
+          link.classList.toggle("is-active", link.dataset.navTarget === id);
+        });
+      };
+
+      const updateActiveByScroll = () => {
+        const probe = window.innerHeight * 0.3;
+        let current = navTargets[0]?.el.id ?? "home";
+        for (const { el } of navTargets) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= probe) current = el.id;
+          else break;
+        }
+        setActive(current);
+      };
+
+      if (navTargets.length > 0) {
+        updateActiveByScroll();
+        window.addEventListener("scroll", updateActiveByScroll, { passive: true });
+        window.addEventListener("resize", updateActiveByScroll);
+      }
     </script>
   </body>
 </html>
