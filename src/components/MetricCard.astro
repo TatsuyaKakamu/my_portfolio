@@ -1,12 +1,17 @@
 ---
 const { icon: Icon, label, value, unit, note, cardClass } = Astro.props;
+const isNumeric = typeof value === "number";
 ---
 
 <article class:list={["metric-card", cardClass]}>
   <Icon size={28} aria-hidden="true" />
   <span>{label}</span>
   <strong>
-    {value}
+    {isNumeric ? (
+      <span class="metric-value" data-countup={String(value)}>{value}</span>
+    ) : (
+      value
+    )}
     <small>{unit}</small>
   </strong>
   <em>{note}</em>

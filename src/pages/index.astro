@@ -331,7 +331,7 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
                 {
                   training.monthlyHours.map((entry) => (
                     <div class="bar-item">
-                      <span>{entry.hours}</span>
+                      <span class="metric-value" data-countup={String(entry.hours)}>{entry.hours}</span>
                       <i style={`height: ${Math.max(18, Math.min(104, entry.hours * 4))}px`} aria-hidden="true"></i>
                       <small>{entry.label}</small>
                     </div>
@@ -341,7 +341,7 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
             </div>
             <div class="monthly-average">
               <span>6ヶ月平均</span>
-              <strong>{training.averageMonthlyHours} h</strong>
+              <strong><span class="metric-value" data-countup={String(training.averageMonthlyHours)}>{training.averageMonthlyHours}</span> h</strong>
             </div>
           </div>
         </section>
@@ -395,12 +395,52 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
     </div>
 
     <script>
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
+      const formatValue = (value: number, decimals: number) => {
+        const fixed = value.toFixed(decimals);
+        return decimals > 0 ? fixed : String(Math.round(value));
+      };
+
+      const animateCountUps = (root: Element) => {
+        const els = root.querySelectorAll<HTMLElement>("[data-countup]");
+        els.forEach((el) => {
+          const raw = el.dataset.countup ?? "";
+          const target = Number.parseFloat(raw);
+          if (Number.isNaN(target)) return;
+          const decimals = (raw.split(".")[1] ?? "").length;
+
+          if (prefersReducedMotion) {
+            el.textContent = formatValue(target, decimals);
+            return;
+          }
+
+          const duration = 1400;
+          const start = performance.now();
+          const easeOutExpo = (t: number) =>
+            t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
+
+          const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / duration);
+            const v = target * easeOutExpo(t);
+            el.textContent = formatValue(v, decimals);
+            if (t < 1) requestAnimationFrame(tick);
+            else el.textContent = formatValue(target, decimals);
+          };
+          el.textContent = formatValue(0, decimals);
+          requestAnimationFrame(tick);
+        });
+      };
+
       const sections = document.querySelectorAll(".reveal");
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add("is-visible");
+              animateCountUps(entry.target);
               observer.unobserve(entry.target);
             }
           });
