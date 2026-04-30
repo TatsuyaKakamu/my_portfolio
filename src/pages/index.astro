@@ -279,8 +279,11 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
           />
           <div class="photo-grid">
             {
-              photos.map((photo) => (
-                <figure>
+              photos.map((photo, index) => (
+                <figure style={`--photo-index: ${index};`}>
+                  <span class="shutter shutter-top" aria-hidden="true" />
+                  <span class="shutter shutter-bottom" aria-hidden="true" />
+                  <span class="shutter-flash" aria-hidden="true" />
                   <img src={asset(photo.image)} alt={photo.alt} loading="lazy" />
                   <figcaption>{photo.caption}</figcaption>
                 </figure>
