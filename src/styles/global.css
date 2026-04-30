@@ -647,6 +647,8 @@ a,
   overflow: hidden;
   border-radius: 8px;
   box-shadow: var(--shadow-soft);
+  isolation: isolate;
+  background: #0b0f17;
 }
 
 .photo-grid img {
@@ -654,10 +656,143 @@ a,
   aspect-ratio: 1.28;
   object-fit: cover;
   transition: transform 1100ms ease;
+  opacity: 0;
 }
 
 .photo-grid figure:hover img {
   transform: scale(1.045);
+}
+
+.photo-grid .shutter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 51%;
+  z-index: 3;
+  pointer-events: none;
+  transform: translateY(0);
+  will-change: transform;
+}
+
+.photo-grid .shutter-top {
+  top: 0;
+  background: linear-gradient(180deg, #05070b 0%, #11151d 70%, #1a1f2a 100%);
+  box-shadow: inset 0 -1px 0 rgb(255 255 255 / 8%);
+}
+
+.photo-grid .shutter-bottom {
+  bottom: 0;
+  background: linear-gradient(0deg, #05070b 0%, #11151d 70%, #1a1f2a 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.photo-grid .shutter-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(circle at center, #ffffff 0%, rgb(255 255 255 / 0%) 70%);
+  opacity: 0;
+}
+
+.section-photo.is-visible .photo-grid img {
+  animation: photo-reveal 420ms ease forwards;
+  animation-delay: calc(var(--photo-index, 0) * 220ms + 360ms);
+}
+
+.section-photo.is-visible .photo-grid .shutter-top {
+  animation: shutter-open-top 900ms cubic-bezier(0.7, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--photo-index, 0) * 220ms);
+}
+
+.section-photo.is-visible .photo-grid .shutter-bottom {
+  animation: shutter-open-bottom 900ms cubic-bezier(0.7, 0, 0.2, 1) forwards;
+  animation-delay: calc(var(--photo-index, 0) * 220ms);
+}
+
+.section-photo.is-visible .photo-grid .shutter-flash {
+  animation: shutter-flash 360ms ease-out forwards;
+  animation-delay: calc(var(--photo-index, 0) * 220ms + 320ms);
+}
+
+@keyframes shutter-open-top {
+  0% {
+    transform: translateY(0);
+  }
+
+  28% {
+    transform: translateY(-7%);
+  }
+
+  46% {
+    transform: translateY(3%);
+  }
+
+  60% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes shutter-open-bottom {
+  0% {
+    transform: translateY(0);
+  }
+
+  28% {
+    transform: translateY(7%);
+  }
+
+  46% {
+    transform: translateY(-3%);
+  }
+
+  60% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes shutter-flash {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.85;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes photo-reveal {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo-grid .shutter,
+  .photo-grid .shutter-flash {
+    display: none;
+  }
+
+  .photo-grid img {
+    opacity: 1;
+    animation: none;
+  }
 }
 
 .photo-grid figcaption {
