@@ -681,10 +681,6 @@ a,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.metric-card--streak strong {
-  font-size: clamp(1.05rem, 2vw, 1.4rem);
-}
-
 .metric-card {
   display: grid;
   justify-items: center;
@@ -711,6 +707,11 @@ a,
   color: var(--text);
   font-size: clamp(1.6rem, 3vw, 2.05rem);
   line-height: 1;
+}
+
+.metric-card strong .metric-value {
+  font: inherit;
+  color: inherit;
 }
 
 .metric-card small {

@@ -1,18 +1,26 @@
 ---
-const { icon: Icon, label, value, unit, note, cardClass } = Astro.props;
+const { icon: Icon, label, value, valueParts, unit, note, cardClass } = Astro.props;
 const isNumeric = typeof value === "number";
+const hasParts = Array.isArray(valueParts) && valueParts.length > 0;
 ---
 
 <article class:list={["metric-card", cardClass]}>
   <Icon size={28} aria-hidden="true" />
   <span>{label}</span>
   <strong>
-    {isNumeric ? (
+    {hasParts ? (
+      valueParts.map((part: { value: number; suffix?: string }) => (
+        <>
+          <span class="metric-value" data-countup={String(part.value)}>{part.value}</span>
+          {part.suffix ? <small>{part.suffix}</small> : null}
+        </>
+      ))
+    ) : isNumeric ? (
       <span class="metric-value" data-countup={String(value)}>{value}</span>
     ) : (
       value
     )}
-    <small>{unit}</small>
+    {unit ? <small>{unit}</small> : null}
   </strong>
   <em>{note}</em>
 </article>
