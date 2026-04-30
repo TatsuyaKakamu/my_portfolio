@@ -50,6 +50,10 @@ const sectionIconMap = {
   about: UserRound
 };
 const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.url;
+
+const streakParts = Array.from(
+  training.streak.label.matchAll(/(\d+)(年|ヶ月|週間|日)/g),
+).map((m) => ({ value: Number(m[1]), suffix: m[2] }));
 ---
 
 <!doctype html>
@@ -318,8 +322,7 @@ const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.ur
             <MetricCard
               icon={Flame}
               label="総継続習慣"
-              value={training.streak.label}
-              unit=""
+              valueParts={streakParts}
               note={`${training.streak.startDate} から継続中`}
               cardClass="metric-card--streak"
             />
