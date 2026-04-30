@@ -488,6 +488,26 @@ const streakParts = Array.from(
         window.addEventListener("scroll", updateActiveByScroll, { passive: true });
         window.addEventListener("resize", updateActiveByScroll);
       }
+
+      const topbar = document.querySelector<HTMLElement>(".topbar");
+      const updateTopbarOffset = () => {
+        if (!topbar) return;
+        const styles = getComputedStyle(topbar);
+        const topGap = parseFloat(styles.top) || 0;
+        const offset = topbar.getBoundingClientRect().height + topGap;
+        document.documentElement.style.setProperty("--topbar-offset", `${offset}px`);
+      };
+      updateTopbarOffset();
+      window.addEventListener("resize", updateTopbarOffset);
+      if (topbar && "ResizeObserver" in window) {
+        new ResizeObserver(updateTopbarOffset).observe(topbar);
+      }
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          requestAnimationFrame(() => link.blur());
+        });
+      });
     </script>
   </body>
 </html>

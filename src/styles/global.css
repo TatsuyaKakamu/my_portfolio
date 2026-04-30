@@ -24,6 +24,7 @@
   color: var(--text);
   background: var(--bg);
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--topbar-offset, 90px) + 14px);
 }
 
 * {
