@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Monthly delta update: fetch only previous month's activities, update
-// existing src/data/training-data.json incrementally.
+// Monthly update: fetch all activities, update src/data/training-data.json.
+// monthlyHours is updated incrementally (previous month bucket only).
+// Streak is recomputed from full history to support 12-week blank tolerance.
 // Run by GitHub Actions on the 1st of each month (JST 09:00).
 
 import { readFile, writeFile } from "node:fs/promises";
@@ -11,15 +12,11 @@ import {
   refreshAccessToken,
   fetchActivities,
   toJstNow,
-  isoWeekKeyFromLocal,
-  isoWeekKey,
-  iterateIsoWeeks,
+  jstYearMonthFromLocal,
+  computeStreakFromActivities,
   formatDurationLabel,
   formatJstIso,
-  round1,
-  startOfMonthEpochSec,
-  mondayOfIsoWeek,
-  formatYmd
+  round1
 } from "./lib/strava.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -48,15 +45,15 @@ const prevMonthIdx = prevMonthDate.getUTCMonth();
 const prevMonthKey = `${prevMonthYear}-${String(prevMonthIdx + 1).padStart(2, "0")}`;
 const thisMonthKey = `${thisYear}-${String(thisMonthIdx + 1).padStart(2, "0")}`;
 
-const after = startOfMonthEpochSec(prevMonthYear, prevMonthIdx) - 1;
-const before = startOfMonthEpochSec(thisYear, thisMonthIdx);
-
 const token = await refreshAccessToken();
-console.log(`[update] fetching activities for ${prevMonthKey} (after=${after}, before=${before})`);
-const activities = await fetchActivities(token, { after, before });
+console.log(`[update] fetching all activities for ${prevMonthKey} update...`);
+const activities = await fetchActivities(token, { after: 0 });
 console.log(`[update] fetched ${activities.length} activities`);
 
-const lastMonthSeconds = activities.reduce((s, a) => s + a.moving_time, 0);
+const lastMonthActivities = activities.filter(
+  (a) => jstYearMonthFromLocal(a.start_date_local) === prevMonthKey
+);
+const lastMonthSeconds = lastMonthActivities.reduce((s, a) => s + a.moving_time, 0);
 const lastMonthHours = round1(lastMonthSeconds / 3600);
 
 // monthlyHours: shift oldest out, append this month with 0, set prevMonth bucket.
@@ -93,67 +90,16 @@ if (prev.period?.year === thisYear) {
   yearTotalHours = 0;
 }
 
-// Streak update.
-// Enumerate ISO weeks that overlap previous month, plus the prev-month-end week
-// that may extend into this month. Check each has >=1 activity.
-const prevMonthFirstDay = new Date(Date.UTC(prevMonthYear, prevMonthIdx, 1));
-const prevMonthLastDay = new Date(Date.UTC(prevMonthYear, prevMonthIdx + 1, 0));
-const startWeek = isoWeekKey(prevMonthFirstDay);
-const endWeek = isoWeekKey(prevMonthLastDay);
-const weeksToCheck = iterateIsoWeeks(startWeek, endWeek);
-
-const activeWeeks = new Set();
-for (const a of activities) {
-  const k = isoWeekKeyFromLocal(a.start_date_local);
-  if (k) activeWeeks.add(k);
-}
-const allWeeksActive = weeksToCheck.every((w) => activeWeeks.has(w));
-
-let streak;
-if (allWeeksActive && prev.streak?.startDate) {
-  const startYmd = prev.streak.startDate;
-  const startDate = new Date(`${startYmd}T00:00:00Z`);
-  const endMonday = mondayOfIsoWeek(jstNow);
-  const weeks = Math.round((endMonday.getTime() - startDate.getTime()) / (7 * 86400000)) + 1;
-  streak = {
-    weeks,
-    startDate: startYmd,
-    label: formatDurationLabel(startYmd, jstNow)
-  };
-} else {
-  console.warn(
-    "[update] streak broken (or missing prior streak): activity gap detected in last month. " +
-      "Re-run scripts/strava-bootstrap.mjs to recompute the full streak."
-  );
-  // Fallback: compute a partial streak from the fetched window only.
-  let count = 0;
-  let earliestKey = null;
-  for (let i = weeksToCheck.length - 1; i >= 0; i -= 1) {
-    const wk = weeksToCheck[i];
-    if (activeWeeks.has(wk)) {
-      count += 1;
-      earliestKey = wk;
-    } else {
-      break;
-    }
-  }
-  if (count === 0 || !earliestKey) {
-    streak = { weeks: 0, startDate: formatYmd(mondayOfIsoWeek(jstNow)), label: "0年0ヶ月0週間" };
-  } else {
-    // earliestKey -> Monday date.
-    const [y, w] = earliestKey.split("-W").map(Number);
-    const jan4 = new Date(Date.UTC(y, 0, 4));
-    const jan4Day = jan4.getUTCDay() || 7;
-    const week1Mon = new Date(jan4.getTime() - (jan4Day - 1) * 86400000);
-    const startMon = new Date(week1Mon.getTime() + (w - 1) * 7 * 86400000);
-    const startYmd = formatYmd(startMon);
-    streak = {
-      weeks: count,
-      startDate: startYmd,
-      label: formatDurationLabel(startYmd, jstNow)
-    };
-  }
-}
+// Streak: recompute from all activities (full history needed for 12-week
+// blank tolerance — a single month's fetch is insufficient).
+const streakResult = computeStreakFromActivities(activities, jstNow);
+const streak = {
+  weeks: streakResult.weeks,
+  startDate: streakResult.startDate,
+  label: streakResult.weeks > 0
+    ? formatDurationLabel(streakResult.startDate, jstNow)
+    : "0年0ヶ月0週間"
+};
 
 const data = {
   lastFetchedAt: formatJstIso(jstNow),

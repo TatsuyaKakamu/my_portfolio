@@ -132,7 +132,7 @@ export const externalLinks: ExternalLink[] = [
     status: "ready"
   },
   { label: "Instagram", url: "https://www.instagram.com/t_kakamu_/", icon: "instagram", status: "ready" },
-  { label: "Strava", url: "", icon: "strava", status: "coming-soon" }
+  { label: "Strava", url: "https://www.strava.com/athletes/11705385", icon: "strava", status: "ready" }
 ];
 
 export const projects: Project[] = [
@@ -215,7 +215,7 @@ export const photos: PhotoItem[] = [
 ];
 
 export const training: TrainingSummary = {
-  stravaUrl: "",
+  stravaUrl: "https://www.strava.com/athletes/11705385",
   theme: "training",
   ...(trainingData as Omit<TrainingSummary, "stravaUrl" | "theme">)
 };

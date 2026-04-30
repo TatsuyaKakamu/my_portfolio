@@ -6,6 +6,8 @@ const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";
 const STRAVA_ACTIVITIES_URL = "https://www.strava.com/api/v3/athlete/activities";
 const MAX_PAGES = 50;
 const PER_PAGE = 200;
+// Weeks of consecutive inactivity that terminate a streak when walking back.
+const STREAK_TOLERANCE_WEEKS = 12;
 
 export function requireEnv(names) {
   const missing = names.filter((n) => !process.env[n]);
@@ -202,35 +204,47 @@ export function iterateIsoWeeks(startKey, endKey) {
   return out;
 }
 
-// Compute streak from ALL activities. Walk back from the most recent week
-// that has activity (current week if it has any, else previous week) until
-// hitting a week with zero activity. Returns { weeks, startDate }.
+// Compute streak from ALL activities. Walk back from the most recent active
+// week within STREAK_TOLERANCE_WEEKS of today. Blank weeks are skipped (not
+// counted) rather than terminating the streak; only STREAK_TOLERANCE_WEEKS
+// consecutive blank weeks end the walk. Returns { weeks, startDate }.
+// weeks = count of active weeks only (blank weeks excluded).
+// startDate = Monday of the earliest active week reached.
 export function computeStreakFromActivities(activities, jstNow) {
   const weekSet = new Set();
   for (const a of activities) {
     const k = isoWeekKeyFromLocal(a.start_date_local);
     if (k) weekSet.add(k);
   }
-  // Determine "anchor" = most recent week with activity, starting from current.
   const currentMonday = mondayOfIsoWeek(jstNow);
-  let cursorMonday = new Date(currentMonday);
-  // If current week has no activity, step back one week so streak can still
-  // be reported as ending in last completed week.
-  if (!weekSet.has(isoWeekKey(cursorMonday))) {
-    cursorMonday = new Date(cursorMonday.getTime() - 7 * 86400000);
+  // Anchor: most recent active week within the past STREAK_TOLERANCE_WEEKS.
+  // This allows up to ~3 months of inactivity before losing the streak anchor.
+  let anchor = null;
+  for (let i = 0; i < STREAK_TOLERANCE_WEEKS; i += 1) {
+    const candidate = new Date(currentMonday.getTime() - i * 7 * 86400000);
+    if (weekSet.has(isoWeekKey(candidate))) {
+      anchor = candidate;
+      break;
+    }
   }
-  if (!weekSet.has(isoWeekKey(cursorMonday))) {
+  if (!anchor) {
     return { weeks: 0, startDate: formatYmd(currentMonday) };
   }
   let count = 0;
-  let earliestMonday = cursorMonday;
-  let walker = new Date(cursorMonday);
-  while (weekSet.has(isoWeekKey(walker))) {
-    count += 1;
-    earliestMonday = new Date(walker);
+  let earliestActiveMonday = anchor;
+  let consecutiveBlanks = 0;
+  let walker = new Date(anchor);
+  while (consecutiveBlanks < STREAK_TOLERANCE_WEEKS) {
+    if (weekSet.has(isoWeekKey(walker))) {
+      count += 1;
+      earliestActiveMonday = new Date(walker);
+      consecutiveBlanks = 0;
+    } else {
+      consecutiveBlanks += 1;
+    }
     walker = new Date(walker.getTime() - 7 * 86400000);
   }
-  return { weeks: count, startDate: formatYmd(earliestMonday) };
+  return { weeks: count, startDate: formatYmd(earliestActiveMonday) };
 }
 
 export function startOfMonthEpochSec(year, monthIndex0) {
