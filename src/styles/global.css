@@ -147,12 +147,18 @@ a,
   white-space: nowrap;
 }
 
-.nav-link:hover,
 .nav-link:focus-visible,
 .nav-link.is-active {
   color: var(--security);
   border-bottom-color: var(--security);
   outline: none;
+}
+
+@media (hover: hover) {
+  .nav-link:hover {
+    color: var(--security);
+    border-bottom-color: var(--security);
+  }
 }
 
 .panel {
