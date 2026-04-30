@@ -1,0 +1,122 @@
+#!/usr/bin/env node
+// Monthly update: fetch all activities, update src/data/training-data.json.
+// monthlyHours is updated incrementally (previous month bucket only).
+// Streak is recomputed from full history to support 12-week blank tolerance.
+// Run by GitHub Actions on the 1st of each month (JST 09:00).
+
+import { readFile, writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import {
+  requireEnv,
+  refreshAccessToken,
+  fetchActivities,
+  toJstNow,
+  jstYearMonthFromLocal,
+  computeStreakFromActivities,
+  formatDurationLabel,
+  formatJstIso,
+  round1
+} from "./lib/strava.mjs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const DATA_PATH = resolve(__dirname, "..", "src", "data", "training-data.json");
+
+requireEnv(["STRAVA_CLIENT_ID", "STRAVA_CLIENT_SECRET", "STRAVA_REFRESH_TOKEN"]);
+
+let prev;
+try {
+  prev = JSON.parse(await readFile(DATA_PATH, "utf8"));
+} catch (err) {
+  console.error(
+    `[update] failed to read ${DATA_PATH}: ${err.message}\n` +
+      "Run `node scripts/strava-bootstrap.mjs` first to generate the initial file."
+  );
+  process.exit(1);
+}
+
+const jstNow = toJstNow();
+const thisYear = jstNow.getUTCFullYear();
+const thisMonthIdx = jstNow.getUTCMonth(); // 0-based
+const prevMonthDate = new Date(Date.UTC(thisYear, thisMonthIdx - 1, 1));
+const prevMonthYear = prevMonthDate.getUTCFullYear();
+const prevMonthIdx = prevMonthDate.getUTCMonth();
+const prevMonthKey = `${prevMonthYear}-${String(prevMonthIdx + 1).padStart(2, "0")}`;
+const thisMonthKey = `${thisYear}-${String(thisMonthIdx + 1).padStart(2, "0")}`;
+
+const token = await refreshAccessToken();
+console.log(`[update] fetching all activities for ${prevMonthKey} update...`);
+const activities = await fetchActivities(token, { after: 0 });
+console.log(`[update] fetched ${activities.length} activities`);
+
+const lastMonthActivities = activities.filter(
+  (a) => jstYearMonthFromLocal(a.start_date_local) === prevMonthKey
+);
+const lastMonthSeconds = lastMonthActivities.reduce((s, a) => s + a.moving_time, 0);
+const lastMonthHours = round1(lastMonthSeconds / 3600);
+
+// monthlyHours: shift oldest out, append this month with 0, set prevMonth bucket.
+const oldMonthly = Array.isArray(prev.monthlyHours) ? prev.monthlyHours : [];
+const monthlyHours = oldMonthly.slice(-5).map((b) => ({ ...b }));
+// Ensure we have exactly 5 entries to keep before appending; if file was malformed,
+// fall back to padding with zeros.
+while (monthlyHours.length < 5) {
+  monthlyHours.unshift({ month: "0000-00", label: "?", hours: 0 });
+}
+monthlyHours.push({
+  month: thisMonthKey,
+  label: `${thisMonthIdx + 1}月`,
+  hours: 0
+});
+const prevBucket = monthlyHours[monthlyHours.length - 2];
+prevBucket.month = prevMonthKey;
+prevBucket.label = `${prevMonthIdx + 1}月`;
+prevBucket.hours = lastMonthHours;
+
+const previousMonthTotalHours = round1(prev.lastMonthTotalHours ?? 0);
+const lastMonthDeltaHours = round1(lastMonthHours - previousMonthTotalHours);
+const averageMonthlyHours = round1(
+  monthlyHours.reduce((s, b) => s + b.hours, 0) / monthlyHours.length
+);
+
+// yearTotalHours:
+//  - if cron runs in the same calendar year as previous JSON: add lastMonth.
+//  - otherwise (Jan 1 cron, prevMonth = Dec of previous year): reset to 0.
+let yearTotalHours;
+if (prev.period?.year === thisYear) {
+  yearTotalHours = round1((prev.yearTotalHours ?? 0) + lastMonthHours);
+} else {
+  yearTotalHours = 0;
+}
+
+// Streak: recompute from all activities (full history needed for 12-week
+// blank tolerance — a single month's fetch is insufficient).
+const streakResult = computeStreakFromActivities(activities, jstNow);
+const streak = {
+  weeks: streakResult.weeks,
+  startDate: streakResult.startDate,
+  label: streakResult.weeks > 0
+    ? formatDurationLabel(streakResult.startDate, jstNow)
+    : "0年0ヶ月0週間"
+};
+
+const data = {
+  lastFetchedAt: formatJstIso(jstNow),
+  period: {
+    from: monthlyHours[0].month,
+    to: monthlyHours[monthlyHours.length - 1].month,
+    lastMonth: prevMonthKey,
+    year: thisYear
+  },
+  lastMonthTotalHours: lastMonthHours,
+  previousMonthTotalHours,
+  lastMonthDeltaHours,
+  averageMonthlyHours,
+  yearTotalHours,
+  monthlyHours,
+  streak
+};
+
+await writeFile(DATA_PATH, JSON.stringify(data, null, 2) + "\n", "utf8");
+console.log(`[update] wrote ${DATA_PATH}`);

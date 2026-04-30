@@ -675,6 +675,14 @@ a,
   gap: 22px;
 }
 
+.metric-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.metric-card--streak strong {
+  font-size: clamp(1.05rem, 2vw, 1.4rem);
+}
+
 .metric-card {
   display: grid;
   justify-items: center;

@@ -1,0 +1,51 @@
+{
+  "lastFetchedAt": "2026-04-30T09:06:25+09:00",
+  "period": {
+    "from": "2025-11",
+    "to": "2026-04",
+    "lastMonth": "2026-03",
+    "year": 2026
+  },
+  "lastMonthTotalHours": 29.4,
+  "previousMonthTotalHours": 20.7,
+  "lastMonthDeltaHours": 8.7,
+  "averageMonthlyHours": 25.9,
+  "yearTotalHours": 102,
+  "monthlyHours": [
+    {
+      "month": "2025-11",
+      "label": "11月",
+      "hours": 23.3
+    },
+    {
+      "month": "2025-12",
+      "label": "12月",
+      "hours": 29.9
+    },
+    {
+      "month": "2026-01",
+      "label": "1月",
+      "hours": 24.4
+    },
+    {
+      "month": "2026-02",
+      "label": "2月",
+      "hours": 20.7
+    },
+    {
+      "month": "2026-03",
+      "label": "3月",
+      "hours": 29.4
+    },
+    {
+      "month": "2026-04",
+      "label": "4月",
+      "hours": 27.5
+    }
+  ],
+  "streak": {
+    "weeks": 542,
+    "startDate": "2015-09-07",
+    "label": "10年7ヶ月3週間"
+  }
+}

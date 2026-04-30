@@ -1,8 +1,8 @@
 ---
-const { icon: Icon, label, value, unit, note } = Astro.props;
+const { icon: Icon, label, value, unit, note, cardClass } = Astro.props;
 ---
 
-<article class="metric-card">
+<article class:list={["metric-card", cardClass]}>
   <Icon size={28} aria-hidden="true" />
   <span>{label}</span>
   <strong>
