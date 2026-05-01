@@ -1,10 +1,11 @@
 ---
-const { icon: Icon, label, value, valueParts, unit, note, cardClass } = Astro.props;
+const { icon: Icon, label, value, valueParts, unit, note, cardClass, staggerGroup } = Astro.props;
 const isNumeric = typeof value === "number";
 const hasParts = Array.isArray(valueParts) && valueParts.length > 0;
+const stageAttr = typeof staggerGroup === "number" ? String(staggerGroup) : undefined;
 ---
 
-<article class:list={["metric-card", cardClass]}>
+<article class:list={["metric-card", cardClass]} data-countup-stage={stageAttr}>
   <Icon size={28} aria-hidden="true" />
   <span>{label}</span>
   <strong>
