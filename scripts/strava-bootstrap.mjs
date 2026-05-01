@@ -51,8 +51,8 @@ for (const a of activities) {
 }
 for (const b of monthlyHours) b.hours = round1(b.hours);
 
-const lastMonthTotalHours = monthlyHours[monthlyHours.length - 2].hours;
-const previousMonthTotalHours = monthlyHours[monthlyHours.length - 3].hours;
+const lastMonthTotalHours = monthlyHours[monthlyHours.length - 1].hours;
+const previousMonthTotalHours = monthlyHours[monthlyHours.length - 2].hours;
 const lastMonthDeltaHours = round1(lastMonthTotalHours - previousMonthTotalHours);
 const averageMonthlyHours = round1(
   monthlyHours.reduce((s, b) => s + b.hours, 0) / monthlyHours.length
@@ -69,7 +69,7 @@ const data = {
   period: {
     from: monthlyHours[0].month,
     to: monthlyHours[monthlyHours.length - 1].month,
-    lastMonth: monthlyHours[monthlyHours.length - 2].month,
+    lastMonth: monthlyHours[monthlyHours.length - 1].month,
     year: thisYear
   },
   lastMonthTotalHours,
