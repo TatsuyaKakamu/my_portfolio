@@ -110,7 +110,7 @@ export const profile: Profile = {
     { label: "App & Web Developer", theme: "app" },
     { label: "Industrial Cybersecurity Learner", theme: "security" },
     { label: "Photographer", theme: "photography" },
-    { label: "Runner", theme: "training" }
+    { label: "Training", theme: "training" }
   ]
 };
 
