@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   update:
@@ -17,6 +18,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node
         uses: actions/setup-node@v5
@@ -45,14 +47,18 @@ jobs:
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
         run: node scripts/strava-update-monthly.mjs
 
-      - name: Commit and push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet -- src/data/training-data.json; then
-            echo "No changes to training-data.json"
-            exit 0
-          fi
-          git add src/data/training-data.json
-          git commit -m "chore(strava): update monthly training data"
-          git push origin main
+      - name: Create Pull Request if changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(strava): update monthly training data"
+          title: "chore(strava): update monthly training data"
+          body: |
+            Automated monthly update of Strava training data.
+
+            This PR was created automatically by the `Update Strava training data` workflow because direct pushes to `main` are blocked by repository rules.
+          branch: chore/strava-monthly-update
+          delete-branch: true
+          add-paths: src/data/training-data.json
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          committer: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
