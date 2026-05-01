@@ -13,6 +13,7 @@ import {
   fetchActivities,
   toJstNow,
   jstYearMonthFromLocal,
+  jstYearFromLocal,
   computeStreakFromActivities,
   formatDurationLabel,
   formatJstIso,
@@ -80,15 +81,15 @@ const averageMonthlyHours = round1(
   monthlyHours.reduce((s, b) => s + b.hours, 0) / monthlyHours.length
 );
 
-// yearTotalHours:
-//  - if cron runs in the same calendar year as previous JSON: add lastMonth.
-//  - otherwise (Jan 1 cron, prevMonth = Dec of previous year): reset to 0.
-let yearTotalHours;
-if (prev.period?.year === thisYear) {
-  yearTotalHours = round1((prev.yearTotalHours ?? 0) + lastMonthHours);
-} else {
-  yearTotalHours = 0;
+// Recompute from full history so retroactive edits and mid-month bootstraps
+// don't double-count or drift.
+let yearSeconds = 0;
+for (const a of activities) {
+  if (jstYearFromLocal(a.start_date_local) === thisYear) {
+    yearSeconds += a.moving_time;
+  }
 }
+const yearTotalHours = round1(yearSeconds / 3600);
 
 // Streak: recompute from all activities (full history needed for 12-week
 // blank tolerance — a single month's fetch is insufficient).
