@@ -314,6 +314,7 @@ const streakParts = Array.from(
               value={training.lastMonthTotalHours}
               unit="時間"
               note={`前月比 ${training.lastMonthDeltaHours >= 0 ? "+" : ""}${training.lastMonthDeltaHours.toFixed(1)}時間`}
+              staggerGroup={1}
             />
             <MetricCard
               icon={Hourglass}
@@ -321,6 +322,7 @@ const streakParts = Array.from(
               value={training.yearTotalHours}
               unit="時間"
               note={`${training.period.year}年`}
+              staggerGroup={2}
             />
             <MetricCard
               icon={Flame}
@@ -328,10 +330,11 @@ const streakParts = Array.from(
               valueParts={streakParts}
               note={`${training.streak.startDate} から継続中`}
               cardClass="metric-card--streak"
+              staggerGroup={3}
             />
           </div>
           <div class="training-board">
-            <div class="bar-chart" aria-label="月のトレーニング時間">
+            <div class="bar-chart" aria-label="月のトレーニング時間" data-countup-stage="4">
               <h3>月のトレーニング時間（h）</h3>
               <div class="bars">
                 {
@@ -345,7 +348,7 @@ const streakParts = Array.from(
                 }
               </div>
             </div>
-            <div class="monthly-average">
+            <div class="monthly-average" data-countup-stage="4">
               <span>6ヶ月平均</span>
               <strong><span class="metric-value" data-countup={String(training.averageMonthlyHours)}>{training.averageMonthlyHours}</span> h</strong>
             </div>
@@ -410,6 +413,8 @@ const streakParts = Array.from(
         return decimals > 0 ? fixed : String(Math.round(value));
       };
 
+      const STAGE_DELAY = 450;
+
       const animateCountUps = (root: Element) => {
         const els = root.querySelectorAll<HTMLElement>("[data-countup]");
         els.forEach((el) => {
@@ -423,20 +428,35 @@ const streakParts = Array.from(
             return;
           }
 
+          const stageEl = el.closest<HTMLElement>("[data-countup-stage]");
+          const stage = stageEl
+            ? Number.parseInt(stageEl.dataset.countupStage ?? "0", 10)
+            : 0;
+          const delay =
+            Number.isFinite(stage) && stage > 0 ? (stage - 1) * STAGE_DELAY : 0;
+
           const duration = 1400;
-          const start = performance.now();
           const easeOutExpo = (t: number) =>
             t >= 1 ? 1 : 1 - Math.pow(2, -10 * t);
 
-          const tick = (now: number) => {
-            const t = Math.min(1, (now - start) / duration);
-            const v = target * easeOutExpo(t);
-            el.textContent = formatValue(v, decimals);
-            if (t < 1) requestAnimationFrame(tick);
-            else el.textContent = formatValue(target, decimals);
-          };
           el.textContent = formatValue(0, decimals);
-          requestAnimationFrame(tick);
+
+          const begin = (startTime: number) => {
+            const tick = (now: number) => {
+              const t = Math.min(1, (now - startTime) / duration);
+              const v = target * easeOutExpo(t);
+              el.textContent = formatValue(v, decimals);
+              if (t < 1) requestAnimationFrame(tick);
+              else el.textContent = formatValue(target, decimals);
+            };
+            requestAnimationFrame(tick);
+          };
+
+          if (delay > 0) {
+            window.setTimeout(() => begin(performance.now()), delay);
+          } else {
+            begin(performance.now());
+          }
         });
       };
 
