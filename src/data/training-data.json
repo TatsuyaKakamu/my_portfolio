@@ -1,17 +1,22 @@
 {
-  "lastFetchedAt": "2026-05-01T11:18:48+09:00",
+  "lastFetchedAt": "2026-05-01T12:00:32+09:00",
   "period": {
-    "from": "2025-12",
-    "to": "2026-05",
+    "from": "0000-00",
+    "to": "2026-04",
     "lastMonth": "2026-04",
     "year": 2026
   },
   "lastMonthTotalHours": 27.5,
-  "previousMonthTotalHours": 29.4,
-  "lastMonthDeltaHours": -1.9,
+  "previousMonthTotalHours": 27.5,
+  "lastMonthDeltaHours": 0,
   "averageMonthlyHours": 22,
   "yearTotalHours": 102.9,
   "monthlyHours": [
+    {
+      "month": "0000-00",
+      "label": "?",
+      "hours": 0
+    },
     {
       "month": "2025-12",
       "label": "12月",
@@ -36,11 +41,6 @@
       "month": "2026-04",
       "label": "4月",
       "hours": 27.5
-    },
-    {
-      "month": "2026-05",
-      "label": "5月",
-      "hours": 0
     }
   ],
   "streak": {
