@@ -44,7 +44,6 @@ const prevMonthDate = new Date(Date.UTC(thisYear, thisMonthIdx - 1, 1));
 const prevMonthYear = prevMonthDate.getUTCFullYear();
 const prevMonthIdx = prevMonthDate.getUTCMonth();
 const prevMonthKey = `${prevMonthYear}-${String(prevMonthIdx + 1).padStart(2, "0")}`;
-const thisMonthKey = `${thisYear}-${String(thisMonthIdx + 1).padStart(2, "0")}`;
 
 const token = await refreshAccessToken();
 console.log(`[update] fetching all activities for ${prevMonthKey} update...`);
@@ -57,23 +56,20 @@ const lastMonthActivities = activities.filter(
 const lastMonthSeconds = lastMonthActivities.reduce((s, a) => s + a.moving_time, 0);
 const lastMonthHours = round1(lastMonthSeconds / 3600);
 
-// monthlyHours: shift oldest out, append this month with 0, set prevMonth bucket.
+// monthlyHours: keep the last 5 confirmed months from previous data (dropping
+// any stale current-month or duplicate prev-month entry written by older logic
+// or a same-day re-run), then append the just-completed month with its hours.
 const oldMonthly = Array.isArray(prev.monthlyHours) ? prev.monthlyHours : [];
-const monthlyHours = oldMonthly.slice(-5).map((b) => ({ ...b }));
-// Ensure we have exactly 5 entries to keep before appending; if file was malformed,
-// fall back to padding with zeros.
+const filtered = oldMonthly.filter((b) => b.month < prevMonthKey);
+const monthlyHours = filtered.slice(-5).map((b) => ({ ...b }));
 while (monthlyHours.length < 5) {
   monthlyHours.unshift({ month: "0000-00", label: "?", hours: 0 });
 }
 monthlyHours.push({
-  month: thisMonthKey,
-  label: `${thisMonthIdx + 1}月`,
-  hours: 0
+  month: prevMonthKey,
+  label: `${prevMonthIdx + 1}月`,
+  hours: lastMonthHours
 });
-const prevBucket = monthlyHours[monthlyHours.length - 2];
-prevBucket.month = prevMonthKey;
-prevBucket.label = `${prevMonthIdx + 1}月`;
-prevBucket.hours = lastMonthHours;
 
 const previousMonthTotalHours = round1(prev.lastMonthTotalHours ?? 0);
 const lastMonthDeltaHours = round1(lastMonthHours - previousMonthTotalHours);

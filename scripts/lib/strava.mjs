@@ -133,13 +133,14 @@ export function round1(n) {
   return Math.round(n * 10) / 10;
 }
 
-// Build six monthly buckets ending at the JST execution month.
-// Returns array of 6 entries: oldest first, last entry = execution month.
+// Build six monthly buckets ending at the month before the JST execution month.
+// The in-progress execution month is intentionally excluded so the chart only
+// shows confirmed months. Returns 6 entries oldest first; last = previous month.
 export function buildSixMonthBuckets(jstNow) {
   const out = [];
   const year = jstNow.getUTCFullYear();
-  const month = jstNow.getUTCMonth(); // 0-based
-  for (let i = 5; i >= 0; i -= 1) {
+  const month = jstNow.getUTCMonth(); // 0-based, current
+  for (let i = 6; i >= 1; i -= 1) {
     const d = new Date(Date.UTC(year, month - i, 1));
     const y = d.getUTCFullYear();
     const m = d.getUTCMonth() + 1;
