@@ -1,22 +1,17 @@
 {
-  "lastFetchedAt": "2026-05-01T23:53:19+09:00",
+  "lastFetchedAt": "2026-06-01T11:41:32+09:00",
   "period": {
-    "from": "2025-11",
-    "to": "2026-04",
-    "lastMonth": "2026-04",
+    "from": "2025-12",
+    "to": "2026-05",
+    "lastMonth": "2026-05",
     "year": 2026
   },
-  "lastMonthTotalHours": 27.5,
-  "previousMonthTotalHours": 29.4,
-  "lastMonthDeltaHours": -1.9,
-  "averageMonthlyHours": 25.9,
-  "yearTotalHours": 102.9,
+  "lastMonthTotalHours": 24.2,
+  "previousMonthTotalHours": 27.5,
+  "lastMonthDeltaHours": -3.3,
+  "averageMonthlyHours": 26,
+  "yearTotalHours": 126.5,
   "monthlyHours": [
-    {
-      "month": "2025-11",
-      "label": "11月",
-      "hours": 23.3
-    },
     {
       "month": "2025-12",
       "label": "12月",
@@ -41,11 +36,16 @@
       "month": "2026-04",
       "label": "4月",
       "hours": 27.5
+    },
+    {
+      "month": "2026-05",
+      "label": "5月",
+      "hours": 24.2
     }
   ],
   "streak": {
-    "weeks": 542,
+    "weeks": 547,
     "startDate": "2015-09-07",
-    "label": "10年7ヶ月3週間"
+    "label": "10年8ヶ月3週間"
   }
 }
