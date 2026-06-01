@@ -1,4 +1,4 @@
-name: Update Strava training data
+name: Update training data
 
 on:
   schedule:
@@ -23,28 +23,33 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 20
-          cache: npm
 
-      - name: Verify Strava secrets
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify Garmin secrets
         env:
-          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
-          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
-          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
         run: |
-          if [ -z "$STRAVA_CLIENT_ID" ] || [ -z "$STRAVA_CLIENT_SECRET" ] || [ -z "$STRAVA_REFRESH_TOKEN" ]; then
-            echo "::error::STRAVA_* secrets are not configured"
+          if [ -z "$GARMIN_EMAIL" ] || [ -z "$GARMIN_PASSWORD" ]; then
+            echo "::error::GARMIN_EMAIL / GARMIN_PASSWORD secrets are not configured"
             exit 1
           fi
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Python dependencies
+        run: pip install -r scripts/requirements.txt
 
-      - name: Fetch last month's Strava data
+      - name: Fetch Garmin activities
         env:
-          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
-          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
-          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
-        run: node scripts/strava-update-monthly.mjs
+          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
+          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+        run: python scripts/garmin_fetch.py
+
+      - name: Aggregate training data
+        run: node scripts/training-update-monthly.mjs
 
       - name: Commit and push if changed
         env:
@@ -57,7 +62,7 @@ jobs:
             exit 0
           fi
           git add src/data/training-data.json
-          git commit -m "chore(strava): update monthly training data"
+          git commit -m "chore(training): update monthly training data"
           git push origin main
           # A push made with GITHUB_TOKEN does not trigger the on:push deploy
           # workflow (recursive-run prevention), so trigger it explicitly.

@@ -1,69 +1,44 @@
-// Shared helpers for Strava data fetch scripts.
+// Shared helpers for training data aggregation scripts.
 // Pure Node 20 (no external deps). All time math operates in JST (UTC+9).
+//
+// Activity records consumed here have the minimal shape
+//   { moving_time (sec, number), start_date_local (ISO local string) }
+// produced by scripts/garmin_fetch.py from Garmin Connect.
+
+import { readFile } from "node:fs/promises";
 
 const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
-const STRAVA_TOKEN_URL = "https://www.strava.com/oauth/token";
-const STRAVA_ACTIVITIES_URL = "https://www.strava.com/api/v3/athlete/activities";
-const MAX_PAGES = 50;
-const PER_PAGE = 200;
 // Weeks of consecutive inactivity that terminate a streak when walking back.
 const STREAK_TOLERANCE_WEEKS = 12;
 
-export function requireEnv(names) {
-  const missing = names.filter((n) => !process.env[n]);
-  if (missing.length > 0) {
-    console.error(`[strava] missing env: ${missing.join(", ")}`);
+// Read activity records produced by scripts/garmin_fetch.py. Returns minimal
+// records: { moving_time (sec), start_date_local (ISO local string) }.
+export async function readActivitiesFile(path) {
+  let raw;
+  try {
+    raw = await readFile(path, "utf8");
+  } catch (err) {
+    console.error(
+      `[training] failed to read activities file ${path}: ${err.message}\n` +
+        "Run `python scripts/garmin_fetch.py` first to produce it."
+    );
     process.exit(1);
   }
-}
-
-export async function refreshAccessToken() {
-  const body = new URLSearchParams({
-    client_id: process.env.STRAVA_CLIENT_ID,
-    client_secret: process.env.STRAVA_CLIENT_SECRET,
-    grant_type: "refresh_token",
-    refresh_token: process.env.STRAVA_REFRESH_TOKEN
-  });
-  const res = await fetch(STRAVA_TOKEN_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    console.error(`[strava] token refresh failed: ${res.status} ${text}`);
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (err) {
+    console.error(`[training] activities file is not valid JSON: ${err.message}`);
     process.exit(1);
   }
-  const json = await res.json();
-  if (!json.access_token) {
-    console.error("[strava] token refresh response missing access_token");
+  if (!Array.isArray(parsed)) {
+    console.error("[training] activities file must contain a JSON array");
     process.exit(1);
   }
-  return json.access_token;
-}
-
-// Fetch activities with optional after/before epoch seconds. Returns
-// minimal records: { moving_time (sec), start_date_local (ISO local string) }.
-export async function fetchActivities(token, { after, before } = {}) {
   const out = [];
-  for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const params = new URLSearchParams({ per_page: String(PER_PAGE), page: String(page) });
-    if (typeof after === "number") params.set("after", String(after));
-    if (typeof before === "number") params.set("before", String(before));
-    const url = `${STRAVA_ACTIVITIES_URL}?${params.toString()}`;
-    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.error(`[strava] activities fetch failed page=${page}: ${res.status} ${text}`);
-      process.exit(1);
-    }
-    const batch = await res.json();
-    if (!Array.isArray(batch) || batch.length === 0) break;
-    for (const a of batch) {
-      if (typeof a.moving_time !== "number" || typeof a.start_date_local !== "string") continue;
-      out.push({ moving_time: a.moving_time, start_date_local: a.start_date_local });
-    }
-    if (batch.length < PER_PAGE) break;
+  for (const a of parsed) {
+    if (typeof a.moving_time !== "number" || typeof a.start_date_local !== "string") continue;
+    out.push({ moving_time: a.moving_time, start_date_local: a.start_date_local });
   }
   return out;
 }
@@ -74,7 +49,7 @@ export function toJstNow(date = new Date()) {
   return new Date(date.getTime() + JST_OFFSET_MS);
 }
 
-// "YYYY-MM" from a local-time ISO string like "2026-04-15T07:00:00Z".
+// "YYYY-MM" from a local-time ISO string like "2026-04-15T07:00:00".
 export function jstYearMonthFromLocal(localIso) {
   return localIso.slice(0, 7);
 }
@@ -246,10 +221,4 @@ export function computeStreakFromActivities(activities, jstNow) {
     walker = new Date(walker.getTime() - 7 * 86400000);
   }
   return { weeks: count, startDate: formatYmd(earliestActiveMonday) };
-}
-
-export function startOfMonthEpochSec(year, monthIndex0) {
-  // Convert "YYYY-MM-01 00:00:00 JST" to UTC epoch seconds.
-  const utcMs = Date.UTC(year, monthIndex0, 1, 0, 0, 0) - JST_OFFSET_MS;
-  return Math.floor(utcMs / 1000);
 }

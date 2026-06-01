@@ -1,0 +1,3 @@
+# Unofficial Garmin Connect API wrapper used by garmin_fetch.py.
+# Pinned for reproducible CI runs; bump if a Garmin-side change breaks login.
+garminconnect==0.3.4
