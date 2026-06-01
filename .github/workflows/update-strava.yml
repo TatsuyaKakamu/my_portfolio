@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   update:
@@ -46,6 +47,8 @@ jobs:
         run: node scripts/strava-update-monthly.mjs
 
       - name: Commit and push if changed
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -56,3 +59,7 @@ jobs:
           git add src/data/training-data.json
           git commit -m "chore(strava): update monthly training data"
           git push origin main
+          # A push made with GITHUB_TOKEN does not trigger the on:push deploy
+          # workflow (recursive-run prevention), so trigger it explicitly.
+          # workflow_dispatch is an exception that fires even with GITHUB_TOKEN.
+          gh workflow run deploy.yml --ref main
