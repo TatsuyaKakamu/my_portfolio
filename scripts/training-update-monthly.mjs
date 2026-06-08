@@ -69,7 +69,12 @@ monthlyHours.push({
   hours: lastMonthHours
 });
 
-const previousMonthTotalHours = round1(prev.lastMonthTotalHours ?? 0);
+// previousMonthTotalHours must be the month BEFORE prevMonthKey. Read it from
+// the reconstructed monthlyHours (index length-2) rather than
+// prev.lastMonthTotalHours: on a same-month re-run (e.g. workflow_dispatch)
+// prev.lastMonthTotalHours is already prevMonthKey's value, which would make
+// the delta compare prevMonth against itself.
+const previousMonthTotalHours = round1(monthlyHours[monthlyHours.length - 2].hours);
 const lastMonthDeltaHours = round1(lastMonthHours - previousMonthTotalHours);
 const averageMonthlyHours = round1(
   monthlyHours.reduce((s, b) => s + b.hours, 0) / monthlyHours.length
