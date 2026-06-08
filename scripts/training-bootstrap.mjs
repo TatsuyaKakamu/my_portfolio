@@ -1,17 +1,15 @@
 #!/usr/bin/env node
-// One-time bootstrap: fetch all Strava activities, compute training-data.json
-// from scratch (six-month buckets, year total, streak).
+// One-time bootstrap: read fetched activities, compute training-data.json from
+// scratch (six-month buckets, year total, streak).
 // Usage:
-//   STRAVA_CLIENT_ID=... STRAVA_CLIENT_SECRET=... STRAVA_REFRESH_TOKEN=... \
-//     node scripts/strava-bootstrap.mjs
+//   GARMIN_EMAIL=... GARMIN_PASSWORD=... python scripts/garmin_fetch.py
+//   node scripts/training-bootstrap.mjs [path/to/activities.json]
 
 import { writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import {
-  requireEnv,
-  refreshAccessToken,
-  fetchActivities,
+  readActivitiesFile,
   toJstNow,
   buildSixMonthBuckets,
   jstYearMonthFromLocal,
@@ -20,18 +18,17 @@ import {
   formatDurationLabel,
   formatJstIso,
   round1
-} from "./lib/strava.mjs";
+} from "./lib/training.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const ACTIVITIES_PATH = process.argv[2]
+  ? resolve(process.argv[2])
+  : resolve(__dirname, ".cache", "activities.json");
 const OUTPUT_PATH = resolve(__dirname, "..", "src", "data", "training-data.json");
 
-requireEnv(["STRAVA_CLIENT_ID", "STRAVA_CLIENT_SECRET", "STRAVA_REFRESH_TOKEN"]);
-
-const token = await refreshAccessToken();
-console.log("[bootstrap] fetching all activities...");
-const activities = await fetchActivities(token, { after: 0 });
-console.log(`[bootstrap] fetched ${activities.length} activities`);
+const activities = await readActivitiesFile(ACTIVITIES_PATH);
+console.log(`[bootstrap] loaded ${activities.length} activities`);
 
 const jstNow = toJstNow();
 const thisYear = jstNow.getUTCFullYear();

@@ -1,16 +1,15 @@
 #!/usr/bin/env node
-// Monthly update: fetch all activities, update src/data/training-data.json.
+// Monthly update: read fetched activities, update src/data/training-data.json.
 // monthlyHours is updated incrementally (previous month bucket only).
 // Streak is recomputed from full history to support 12-week blank tolerance.
-// Run by GitHub Actions on the 1st of each month (JST 09:00).
+// Run by GitHub Actions on the 1st of each month (JST 09:00), after
+// scripts/garmin_fetch.py has produced the activities cache.
 
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import {
-  requireEnv,
-  refreshAccessToken,
-  fetchActivities,
+  readActivitiesFile,
   toJstNow,
   jstYearMonthFromLocal,
   jstYearFromLocal,
@@ -18,13 +17,14 @@ import {
   formatDurationLabel,
   formatJstIso,
   round1
-} from "./lib/strava.mjs";
+} from "./lib/training.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const ACTIVITIES_PATH = process.argv[2]
+  ? resolve(process.argv[2])
+  : resolve(__dirname, ".cache", "activities.json");
 const DATA_PATH = resolve(__dirname, "..", "src", "data", "training-data.json");
-
-requireEnv(["STRAVA_CLIENT_ID", "STRAVA_CLIENT_SECRET", "STRAVA_REFRESH_TOKEN"]);
 
 let prev;
 try {
@@ -32,10 +32,13 @@ try {
 } catch (err) {
   console.error(
     `[update] failed to read ${DATA_PATH}: ${err.message}\n` +
-      "Run `node scripts/strava-bootstrap.mjs` first to generate the initial file."
+      "Run `node scripts/training-bootstrap.mjs` first to generate the initial file."
   );
   process.exit(1);
 }
+
+const activities = await readActivitiesFile(ACTIVITIES_PATH);
+console.log(`[update] loaded ${activities.length} activities`);
 
 const jstNow = toJstNow();
 const thisYear = jstNow.getUTCFullYear();
@@ -44,11 +47,6 @@ const prevMonthDate = new Date(Date.UTC(thisYear, thisMonthIdx - 1, 1));
 const prevMonthYear = prevMonthDate.getUTCFullYear();
 const prevMonthIdx = prevMonthDate.getUTCMonth();
 const prevMonthKey = `${prevMonthYear}-${String(prevMonthIdx + 1).padStart(2, "0")}`;
-
-const token = await refreshAccessToken();
-console.log(`[update] fetching all activities for ${prevMonthKey} update...`);
-const activities = await fetchActivities(token, { after: 0 });
-console.log(`[update] fetched ${activities.length} activities`);
 
 const lastMonthActivities = activities.filter(
   (a) => jstYearMonthFromLocal(a.start_date_local) === prevMonthKey
@@ -71,7 +69,12 @@ monthlyHours.push({
   hours: lastMonthHours
 });
 
-const previousMonthTotalHours = round1(prev.lastMonthTotalHours ?? 0);
+// previousMonthTotalHours must be the month BEFORE prevMonthKey. Read it from
+// the reconstructed monthlyHours (index length-2) rather than
+// prev.lastMonthTotalHours: on a same-month re-run (e.g. workflow_dispatch)
+// prev.lastMonthTotalHours is already prevMonthKey's value, which would make
+// the delta compare prevMonth against itself.
+const previousMonthTotalHours = round1(monthlyHours[monthlyHours.length - 2].hours);
 const lastMonthDeltaHours = round1(lastMonthHours - previousMonthTotalHours);
 const averageMonthlyHours = round1(
   monthlyHours.reduce((s, b) => s + b.hours, 0) / monthlyHours.length
