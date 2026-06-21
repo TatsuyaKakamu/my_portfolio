@@ -29,13 +29,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Verify Garmin secrets
+      - name: Verify Garmin token secret
         env:
-          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
-          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          GARMIN_TOKEN_STORE_B64: ${{ secrets.GARMIN_TOKEN_STORE_B64 }}
         run: |
-          if [ -z "$GARMIN_EMAIL" ] || [ -z "$GARMIN_PASSWORD" ]; then
-            echo "::error::GARMIN_EMAIL / GARMIN_PASSWORD secrets are not configured"
+          if [ -z "$GARMIN_TOKEN_STORE_B64" ]; then
+            echo "::error::GARMIN_TOKEN_STORE_B64 secret is not configured (mint it with scripts/garmin_login.py)"
             exit 1
           fi
 
@@ -44,8 +43,7 @@ jobs:
 
       - name: Fetch Garmin activities
         env:
-          GARMIN_EMAIL: ${{ secrets.GARMIN_EMAIL }}
-          GARMIN_PASSWORD: ${{ secrets.GARMIN_PASSWORD }}
+          GARMIN_TOKEN_STORE_B64: ${{ secrets.GARMIN_TOKEN_STORE_B64 }}
         run: python scripts/garmin_fetch.py
 
       - name: Aggregate training data

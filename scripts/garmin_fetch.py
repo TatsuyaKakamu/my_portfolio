@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 """Fetch Garmin Connect activities and emit minimal records as JSON.
 
-Logs in with GARMIN_EMAIL / GARMIN_PASSWORD (two-factor auth must be OFF so the
-login can run unattended in CI) and writes an array of
+Authenticates with a pre-minted session token store (no password, no MFA prompt)
+and writes an array of
     { "moving_time": <int seconds>, "start_date_local": "YYYY-MM-DDTHH:MM:SS" }
 to --out (default scripts/.cache/activities.json). The Node aggregation scripts
 (training-bootstrap.mjs / training-update-monthly.mjs) consume this file, so the
 existing JST / streak / six-month-bucket math is reused unchanged.
 
+Token source (the account keeps two-factor auth enabled; the token is minted
+once with scripts/garmin_login.py):
+  - CI: GARMIN_TOKEN_STORE_B64 — base64 of a tar.gz of the token directory.
+  - Local: GARMINTOKENS — path to the token directory (default ~/.garminconnect).
+
 Usage:
-    GARMIN_EMAIL=... GARMIN_PASSWORD=... python scripts/garmin_fetch.py
+    GARMIN_TOKEN_STORE_B64=... python scripts/garmin_fetch.py        # CI
+    GARMINTOKENS=~/.garminconnect python scripts/garmin_fetch.py     # local
 
 This uses the unofficial python-garminconnect library, which talks to Garmin's
 private endpoints and can break when Garmin changes them. Failures exit non-zero
@@ -17,10 +23,14 @@ so the workflow stops before overwriting training-data.json with bad data.
 """
 
 import argparse
+import base64
 import datetime as dt
+import io
 import json
 import os
 import sys
+import tarfile
+import tempfile
 
 try:
     from garminconnect import Garmin
@@ -34,6 +44,30 @@ except ImportError:
 DEFAULT_OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".cache", "activities.json")
 
 
+def resolve_tokenstore() -> str:
+    """Return a token-store directory, materializing it from the base64 secret
+    if GARMIN_TOKEN_STORE_B64 is set, otherwise using GARMINTOKENS."""
+    blob = os.environ.get("GARMIN_TOKEN_STORE_B64")
+    if blob:
+        try:
+            data = base64.b64decode(blob)
+            tokenstore = tempfile.mkdtemp(prefix="garmin-tokens-")
+            with tarfile.open(fileobj=io.BytesIO(data), mode="r:gz") as tar:
+                tar.extractall(tokenstore, filter="data")  # Python 3.12+
+            return tokenstore
+        except Exception as err:  # noqa: BLE001
+            sys.stderr.write(f"[garmin] failed to read GARMIN_TOKEN_STORE_B64: {err}\n")
+            sys.exit(1)
+    tokenstore = os.environ.get("GARMINTOKENS")
+    if tokenstore:
+        return os.path.expanduser(tokenstore)
+    sys.stderr.write(
+        "[garmin] no token store: set GARMIN_TOKEN_STORE_B64 (CI) or GARMINTOKENS (local).\n"
+        "Run `python scripts/garmin_login.py` once to mint a token.\n"
+    )
+    sys.exit(1)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch Garmin activities as minimal JSON records.")
     parser.add_argument("--out", default=DEFAULT_OUT, help="output JSON path")
@@ -44,17 +78,16 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    email = os.environ.get("GARMIN_EMAIL")
-    password = os.environ.get("GARMIN_PASSWORD")
-    if not email or not password:
-        sys.stderr.write("[garmin] missing GARMIN_EMAIL / GARMIN_PASSWORD\n")
-        sys.exit(1)
-
+    tokenstore = resolve_tokenstore()
     try:
-        client = Garmin(email=email, password=password)
-        client.login()
+        client = Garmin()
+        client.login(tokenstore)
     except Exception as err:  # noqa: BLE001 - surface any auth/library failure
-        sys.stderr.write(f"[garmin] login failed: {err}\n")
+        sys.stderr.write(
+            f"[garmin] token login failed: {err}\n"
+            "The session may have expired; re-run `python scripts/garmin_login.py` "
+            "and update the GARMIN_TOKEN_STORE_B64 secret.\n"
+        )
         sys.exit(1)
 
     end = dt.date.today().isoformat()
