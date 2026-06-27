@@ -105,7 +105,7 @@ export const profile: Profile = {
   summary:
     "写真とトレーニングを通じて心身を整えながら、アプリ・Webサイト開発、業務の自動化、産業用サイバーセキュリティの学習に日々取り組んでいます。",
   portrait: "/images/generated/profile-portrait.jpg",
-  portraitAlt: "サイクルジャージ姿で賞状を持つ人物のモノクロ調ポートレート",
+  portraitAlt: "シクロクロスのコースで自転車にまたがり、カメラを構えて笑顔を見せる人物のイラスト調ポートレート",
   badges: [
     { label: "App & Web Developer", theme: "app" },
     { label: "Industrial Cybersecurity Learner", theme: "security" },
