@@ -1,9 +1,11 @@
 name: Update Strava training data
 
 on:
-  schedule:
-    # Monthly on the 1st at 00:00 UTC = 09:00 JST.
-    - cron: "0 0 1 * *"
+  # Strava/Garmin 連携を停止したため自動取得を無効化（毎月の失敗を防ぐ）。
+  # 取得スクリプトは残しているので、再開時は下の schedule を復活させる。
+  # schedule:
+  #   # Monthly on the 1st at 00:00 UTC = 09:00 JST.
+  #   - cron: "0 0 1 * *"
   workflow_dispatch:
 
 permissions:
