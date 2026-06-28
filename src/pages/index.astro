@@ -51,8 +51,43 @@ const sectionIconMap = {
 };
 const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.url;
 
+// Strava/Garmin 連携を停止したため、Training セクションは「総継続習慣」のみ表示する。
+// 他のカード・グラフ・CTA は SHOW_TRAINING_DETAILS で非表示にするだけで、
+// データ・描画コードは残す（後で再開できるように）。true に戻せば元に戻る。
+const SHOW_TRAINING_DETAILS = false;
+
+// 総継続習慣は時間経過でカウントアップする（データ取得停止後の運用）。
+// startDate からの継続期間を ISO 週（月曜）基準で算出し、毎週月曜に 1 週増える。
+// 起点: 5月末「10年8ヶ月3週間」。2026-06-29 で +4週（=10年9ヶ月3週間）、以後毎月曜 +1週。
+// ここではビルド時の値をフォールバックとして描画し、クライアント側スクリプトで毎回ライブ更新する。
+function jstNow(d = new Date()) {
+  return new Date(d.getTime() + 9 * 60 * 60 * 1000);
+}
+function mondayOfIsoWeek(j: Date) {
+  const d = new Date(Date.UTC(j.getUTCFullYear(), j.getUTCMonth(), j.getUTCDate()));
+  const day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() - (day - 1));
+  return d;
+}
+function streakDurationLabel(startYmd: string, ref: Date) {
+  const [sy, sm, sd] = startYmd.split("-").map(Number);
+  let years = ref.getUTCFullYear() - sy;
+  let months = ref.getUTCMonth() + 1 - sm;
+  let days = ref.getUTCDate() - sd;
+  if (days < 0) {
+    months -= 1;
+    days += new Date(Date.UTC(ref.getUTCFullYear(), ref.getUTCMonth(), 0)).getUTCDate();
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+  const weeks = Math.floor(days / 7);
+  return `${years}年${months}ヶ月${weeks}週間`;
+}
+const streakLabelNow = streakDurationLabel(training.streak.startDate, mondayOfIsoWeek(jstNow()));
 const streakParts = Array.from(
-  training.streak.label.matchAll(/(\d+)(年|ヶ月|週間|日)/g),
+  streakLabelNow.matchAll(/(\d+)(年|ヶ月|週間|日)/g),
 ).map((m) => ({ value: Number(m[1]), suffix: m[2] }));
 ---
 
@@ -303,57 +338,106 @@ const streakParts = Array.from(
             description="トレーニングを習慣化し、心身のコンディションを整えています。"
             icon={sectionIconMap.training}
             theme="training"
-            ctaLabel="Strava を見る"
+            ctaLabel={SHOW_TRAINING_DETAILS ? "Strava を見る" : undefined}
             ctaHref={training.stravaUrl}
             disabled={!training.stravaUrl}
           />
-          <div class="metric-grid metric-grid--three">
-            <MetricCard
-              icon={Clock}
-              label="先月の総トレーニング"
-              value={training.lastMonthTotalHours}
-              unit="時間"
-              note={`前月比 ${training.lastMonthDeltaHours >= 0 ? "+" : ""}${training.lastMonthDeltaHours.toFixed(1)}時間`}
-              staggerGroup={1}
-            />
-            <MetricCard
-              icon={Hourglass}
-              label="今年の総トレーニング時間"
-              value={training.yearTotalHours}
-              unit="時間"
-              note={`${training.period.year}年`}
-              staggerGroup={2}
-            />
+          <div class:list={["metric-grid", SHOW_TRAINING_DETAILS && "metric-grid--three"]}>
+            {SHOW_TRAINING_DETAILS && (
+              <Fragment>
+                <MetricCard
+                  icon={Clock}
+                  label="先月の総トレーニング"
+                  value={training.lastMonthTotalHours}
+                  unit="時間"
+                  note={`前月比 ${training.lastMonthDeltaHours >= 0 ? "+" : ""}${training.lastMonthDeltaHours.toFixed(1)}時間`}
+                  staggerGroup={1}
+                />
+                <MetricCard
+                  icon={Hourglass}
+                  label="今年の総トレーニング時間"
+                  value={training.yearTotalHours}
+                  unit="時間"
+                  note={`${training.period.year}年`}
+                  staggerGroup={2}
+                />
+              </Fragment>
+            )}
             <MetricCard
               icon={Flame}
               label="総継続習慣"
               valueParts={streakParts}
               note={`${training.streak.startDate} から継続中`}
               cardClass="metric-card--streak"
-              staggerGroup={3}
+              staggerGroup={1}
             />
           </div>
-          <div class="training-board">
-            <div class="bar-chart" aria-label="月のトレーニング時間" data-countup-stage="4">
-              <h3>月のトレーニング時間（h）</h3>
-              <div class="bars">
-                {
-                  training.monthlyHours.map((entry) => (
-                    <div class="bar-item">
-                      <span class="metric-value" data-countup={String(entry.hours)}>{entry.hours}</span>
-                      <i style={`height: ${Math.max(18, Math.min(104, entry.hours * 4))}px`} aria-hidden="true"></i>
-                      <small>{entry.label}</small>
-                    </div>
-                  ))
-                }
+          {SHOW_TRAINING_DETAILS && (
+            <div class="training-board">
+              <div class="bar-chart" aria-label="月のトレーニング時間" data-countup-stage="4">
+                <h3>月のトレーニング時間（h）</h3>
+                <div class="bars">
+                  {
+                    training.monthlyHours.map((entry) => (
+                      <div class="bar-item">
+                        <span class="metric-value" data-countup={String(entry.hours)}>{entry.hours}</span>
+                        <i style={`height: ${Math.max(18, Math.min(104, entry.hours * 4))}px`} aria-hidden="true"></i>
+                        <small>{entry.label}</small>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+              <div class="monthly-average" data-countup-stage="4">
+                <span>6ヶ月平均</span>
+                <strong><span class="metric-value" data-countup={String(training.averageMonthlyHours)}>{training.averageMonthlyHours}</span> h</strong>
               </div>
             </div>
-            <div class="monthly-average" data-countup-stage="4">
-              <span>6ヶ月平均</span>
-              <strong><span class="metric-value" data-countup={String(training.averageMonthlyHours)}>{training.averageMonthlyHours}</span> h</strong>
-            </div>
-          </div>
+          )}
         </section>
+
+        <script>
+          // 総継続習慣をクライアント側でライブ算出する。再デプロイ不要で、毎週月曜に 1 週増える。
+          // startDate（カードの注記 "YYYY-MM-DD から継続中" から取得）から当該 ISO 週の月曜までの
+          // 継続期間を「X年Yヶ月Z週間」で求め、サーバ側のビルド値を上書きする。
+          (function () {
+            const card = document.querySelector(".metric-card--streak");
+            if (!card) return;
+            const strong = card.querySelector("strong");
+            if (!strong) return;
+            const noteText = card.querySelector("em")?.textContent ?? "";
+            const m = noteText.match(/(\d{4})-(\d{2})-(\d{2})/);
+            const startYmd = m ? `${m[1]}-${m[2]}-${m[3]}` : "2015-09-07";
+
+            // JST の現在時刻（getUTC* で JST の暦フィールドを読むためにオフセットを足す）。
+            const jst = new Date(Date.now() + 9 * 60 * 60 * 1000);
+            const ref = new Date(Date.UTC(jst.getUTCFullYear(), jst.getUTCMonth(), jst.getUTCDate()));
+            const day = ref.getUTCDay() || 7; // Mon=1..Sun=7
+            ref.setUTCDate(ref.getUTCDate() - (day - 1)); // 当該 ISO 週の月曜
+
+            const [sy, sm, sd] = startYmd.split("-").map(Number);
+            let years = ref.getUTCFullYear() - sy;
+            let months = ref.getUTCMonth() + 1 - sm;
+            let days = ref.getUTCDate() - sd;
+            if (days < 0) {
+              months -= 1;
+              days += new Date(Date.UTC(ref.getUTCFullYear(), ref.getUTCMonth(), 0)).getUTCDate();
+            }
+            if (months < 0) {
+              years -= 1;
+              months += 12;
+            }
+            const weeks = Math.floor(days / 7);
+            const parts = [
+              { value: years, suffix: "年" },
+              { value: months, suffix: "ヶ月" },
+              { value: weeks, suffix: "週間" },
+            ];
+            strong.innerHTML = parts
+              .map((p) => `<span class="metric-value">${p.value}</span><small>${p.suffix}</small>`)
+              .join("");
+          })();
+        </script>
 
         <section class="panel section section-about reveal" id="about" aria-labelledby="about-title">
           <SectionHeading
