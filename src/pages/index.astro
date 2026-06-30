@@ -89,6 +89,7 @@ const streakLabelNow = streakDurationLabel(training.streak.startDate, mondayOfIs
 const streakParts = Array.from(
   streakLabelNow.matchAll(/(\d+)(年|ヶ月|週間|日)/g),
 ).map((m) => ({ value: Number(m[1]), suffix: m[2] }));
+const privacyUrl = asset("privacy/");
 ---
 
 <!doctype html>
@@ -482,6 +483,9 @@ const streakParts = Array.from(
           <BadgeCheck size={26} aria-hidden="true" />
           <Camera size={26} aria-hidden="true" />
           <Activity size={26} aria-hidden="true" />
+        </div>
+        <div class="footer-links" aria-label="Footer navigation">
+          <a href={privacyUrl}>Privacy Policy</a>
         </div>
         <small>© 2025 {profile.name}</small>
       </footer>
