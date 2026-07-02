@@ -158,6 +158,17 @@ export const projects: Project[] = [
     demoUrl: "https://tatsuyakakamu.github.io/photographer_demo_site/",
     featured: true,
     lastFetchedAt: "2026-04-26T00:00:00+09:00"
+  },
+  {
+    name: "Conductor Studio for iOS",
+    description: "Conductor向けの非公式・実験的なiPad / iPhoneリマップアプリ。CoreBluetooth経由での設定変更を検証する参考実装。",
+    purpose: "SafariがWeb Bluetoothに対応していないiPad / iPhone上で、BLE経由のキーボード設定変更を試すための実験的アプリ。",
+    screenshot: "/images/generated/app-conductor-studio-ios.jpg",
+    screenshotAlt: "Conductor Studio for iOSでレイヤーやキー設定を編集しているiPad画面",
+    techStack: ["iOS", "SwiftUI", "CoreBluetooth", "ZMK Studio"],
+    repositoryUrl: "https://github.com/TatsuyaKakamu/conductor_studio_ios",
+    featured: false,
+    lastFetchedAt: "2026-07-02T00:00:00+09:00"
   }
 ];
 
