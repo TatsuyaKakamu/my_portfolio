@@ -5,7 +5,7 @@ import { asset } from "../lib/asset";
 import "../styles/global.css";
 
 const homeUrl = asset("");
-const updatedAt = "2026年6月30日";
+const updatedAt = "2026年7月11日";
 ---
 
 <!doctype html>
@@ -64,7 +64,7 @@ const updatedAt = "2026年6月30日";
           <section>
             <h2>取得する情報</h2>
             <p>
-              対象サービスは、ユーザーの個人情報を販売しません。サービスの提供に必要な範囲を超えて、個人情報、写真データ、利用状況データを収集しません。
+              対象サービスは、ユーザーの個人情報を販売しません。写真データを外部へ送信せず、広告表示に必要な範囲（下記「広告について」参照）を除き、個人情報や利用状況データを収集しません。
             </p>
           </section>
 
@@ -83,9 +83,22 @@ const updatedAt = "2026年6月30日";
           </section>
 
           <section>
-            <h2>広告・解析ツール</h2>
+            <h2>広告について</h2>
             <p>
-              ならべて分割は、広告SDK、アクセス解析SDK、トラッキングツールを使用しません。
+              ならべて分割は、アプリ内に Google AdMob による広告を表示します。広告の表示に伴い、Google が広告配信・不正防止・レポートのために、デバイス情報、IPアドレス、広告の表示や操作に関する情報などを取得する場合があります。
+            </p>
+            <p>
+              本アプリは、ユーザーの行動履歴に基づくパーソナライズ広告を使用せず、非パーソナライズ広告のみを表示します。App Tracking Transparency によるトラッキング許可は求めず、アプリを跨いだトラッキングを行いません。
+            </p>
+            <p>
+              Google による情報の取り扱いは、<a href="https://policies.google.com/privacy">Google プライバシーポリシー</a>および<a href="https://policies.google.com/technologies/ads">Google の広告に関するポリシー</a>をご確認ください。
+            </p>
+          </section>
+
+          <section>
+            <h2>解析ツール</h2>
+            <p>
+              対象サービスは、アクセス解析SDKを使用しません。
             </p>
           </section>
 
