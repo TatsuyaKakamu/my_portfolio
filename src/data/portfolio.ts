@@ -160,6 +160,18 @@ export const projects: Project[] = [
     lastFetchedAt: "2026-04-26T00:00:00+09:00"
   },
   {
+    name: "ならべて分割",
+    description: "Instagram投稿用に写真を4:5 / 1:1 / 2:3へ変換し、画像ごとに1〜3分割して投稿順どおり保存できるiPhoneアプリ。",
+    purpose: "テンプレートや加工なしで、カルーセル投稿前の写真分割と順番ミス防止だけを素早く行う軽量ツール。App Storeで公開中。",
+    screenshot: "/images/generated/app-carousel-split-ios.png",
+    screenshotAlt: "ならべて分割アプリのホーム・編集・プレビュー画面。出力比率と分割枚数を選んでInstagram投稿用に写真を分割する流れ",
+    techStack: ["iOS", "SwiftUI", "Share Extension", "AdMob"],
+    repositoryUrl: "https://github.com/TatsuyaKakamu/carousel_split_ios",
+    demoUrl: "https://apps.apple.com/jp/app/id6783678570",
+    featured: true,
+    lastFetchedAt: "2026-07-16T00:00:00+09:00"
+  },
+  {
     name: "Conductor Studio for iOS",
     description: "Conductor向けの非公式・実験的なiPad / iPhoneリマップアプリ。CoreBluetooth経由での設定変更を検証する参考実装。",
     purpose: "SafariがWeb Bluetoothに対応していないiPad / iPhone上で、BLE経由のキーボード設定変更を試すための実験的アプリ。",
