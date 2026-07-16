@@ -1,4 +1,5 @@
 import trainingData from "./training-data.json";
+import { buildTrainingView } from "../lib/pseudo-training";
 
 export type Theme = "app" | "security" | "photography" | "training" | "about";
 
@@ -237,8 +238,12 @@ export const photos: PhotoItem[] = [
   }
 ];
 
+// 月次集計は擬似データのビルド時フォールバック値。クライアント側で同じロジックにより再算出・上書きされる。
+// streak の startDate は実データのため training-data.json から引き続き採用する。
 export const training: TrainingSummary = {
   stravaUrl: "https://www.strava.com/athletes/11705385",
   theme: "training",
-  ...(trainingData as Omit<TrainingSummary, "stravaUrl" | "theme">)
+  lastFetchedAt: new Date().toISOString(),
+  streak: trainingData.streak,
+  ...buildTrainingView(new Date())
 };

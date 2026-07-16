@@ -51,10 +51,12 @@ const sectionIconMap = {
 };
 const instagramUrl = externalLinks.find((item) => item.icon === "instagram")?.url;
 
-// Strava/Garmin 連携を停止したため、Training セクションは「総継続習慣」のみ表示する。
-// 他のカード・グラフ・CTA は SHOW_TRAINING_DETAILS で非表示にするだけで、
-// データ・描画コードは残す（後で再開できるように）。true に戻せば元に戻る。
-const SHOW_TRAINING_DETAILS = false;
+// Strava/Garmin 連携停止後の運用: 月次カード・グラフは (年, 月) をシードにした擬似データで表示する。
+// 生成ロジックは src/lib/pseudo-training.ts。ビルド時の値をフォールバック描画し、クライアント側で
+// 同じロジックにより再算出して上書きするため、月替わりで自動的にローリングする（再デプロイ不要）。
+// Strava CTA は擬似データと実プロフィールの突き合わせを避けるため非表示を維持する。
+const SHOW_TRAINING_DETAILS = true;
+const SHOW_STRAVA_CTA = false;
 
 // 総継続習慣は時間経過でカウントアップする（データ取得停止後の運用）。
 // startDate からの継続期間を ISO 週（月曜）基準で算出し、毎週月曜に 1 週増える。
@@ -339,7 +341,7 @@ const privacyUrl = asset("privacy/");
             description="トレーニングを習慣化し、心身のコンディションを整えています。"
             icon={sectionIconMap.training}
             theme="training"
-            ctaLabel={SHOW_TRAINING_DETAILS ? "Strava を見る" : undefined}
+            ctaLabel={SHOW_STRAVA_CTA ? "Strava を見る" : undefined}
             ctaHref={training.stravaUrl}
             disabled={!training.stravaUrl}
           />
@@ -437,6 +439,58 @@ const privacyUrl = asset("privacy/");
             strong.innerHTML = parts
               .map((p) => `<span class="metric-value">${p.value}</span><small>${p.suffix}</small>`)
               .join("");
+          })();
+        </script>
+
+        <script>
+          // 月次カード・バーチャートをクライアント側で再算出し、ビルド時の値を上書きする。
+          // 生成が (年, 月) シードで決定的なため同じ月は常に同じ値になり、月替わりで自動ローリングする。
+          // countup アニメーションは reveal 時に data-countup を読むため、ここでの属性更新が先に効く。
+          import { buildTrainingView } from "../lib/pseudo-training";
+
+          (function () {
+            const section = document.querySelector("#training");
+            if (!section) return;
+            const view = buildTrainingView(new Date());
+
+            const setCountup = (el: Element | null, value: number) => {
+              if (!el) return;
+              el.setAttribute("data-countup", String(value));
+              el.textContent = String(value);
+            };
+
+            const cards = Array.from(section.querySelectorAll(".metric-card"));
+            const cardByLabel = (label: string) =>
+              cards.find((card) => card.querySelector(":scope > span")?.textContent?.trim() === label);
+
+            const lastMonthCard = cardByLabel("先月の総トレーニング");
+            if (lastMonthCard) {
+              setCountup(lastMonthCard.querySelector(".metric-value"), view.lastMonthTotalHours);
+              const note = lastMonthCard.querySelector("em");
+              if (note) {
+                const sign = view.lastMonthDeltaHours >= 0 ? "+" : "";
+                note.textContent = `前月比 ${sign}${view.lastMonthDeltaHours.toFixed(1)}時間`;
+              }
+            }
+
+            const yearCard = cardByLabel("今年の総トレーニング時間");
+            if (yearCard) {
+              setCountup(yearCard.querySelector(".metric-value"), view.yearTotalHours);
+              const note = yearCard.querySelector("em");
+              if (note) note.textContent = `${view.period.year}年`;
+            }
+
+            section.querySelectorAll(".bar-chart .bar-item").forEach((item, index) => {
+              const entry = view.monthlyHours[index];
+              if (!entry) return;
+              setCountup(item.querySelector(".metric-value"), entry.hours);
+              const bar = item.querySelector("i");
+              if (bar) bar.style.height = `${Math.max(18, Math.min(104, entry.hours * 4))}px`;
+              const label = item.querySelector("small");
+              if (label) label.textContent = entry.label;
+            });
+
+            setCountup(section.querySelector(".monthly-average .metric-value"), view.averageMonthlyHours);
           })();
         </script>
 
