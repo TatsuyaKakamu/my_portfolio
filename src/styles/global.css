@@ -50,8 +50,8 @@ body::before {
   z-index: 19;
   height: 14px;
   background: rgb(247 248 251 / 72%);
-  backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
   pointer-events: none;
 }
 

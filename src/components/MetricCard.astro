@@ -21,7 +21,7 @@ const stageAttr = typeof staggerGroup === "number" ? String(staggerGroup) : unde
     ) : (
       value
     )}
-    {unit ? <small>{unit}</small> : null}
+    {unit ? <>{" "}<small>{unit}</small></> : null}
   </strong>
   <em>{note}</em>
 </article>
